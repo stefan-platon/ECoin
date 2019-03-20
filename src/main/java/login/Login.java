@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Login {
 	// title message information
-	private String title;
+	private String title = null;
 	private String titleFilePath = "file/title_message.txt";
 
 	// object to manipulate login credentials
@@ -18,7 +18,7 @@ public class Login {
 			InputStream inputStream = classLoader.getResourceAsStream(titleFilePath);
 
 			// create and print title string
-			title = new String();
+			title = "";
 			try (Scanner scanner = new Scanner(inputStream)) {
 				while (scanner.hasNext()) {
 					title += scanner.nextLine() + "\n";
