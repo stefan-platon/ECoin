@@ -8,7 +8,7 @@
 *.ctxt
 
 # Project specific folders
-.target/
+target/
 .settings/
 
 # Project specific files
