@@ -2,6 +2,9 @@ package main;
 
 import login.Login;
 
+/**
+ * Starting point of the program.
+ */
 public class Main {
 
 	public static void main(String[] args) {
