@@ -3,14 +3,28 @@ package login;
 import java.io.InputStream;
 import java.util.Scanner;
 
-public class Login {
-	// title message information
-	private String title = null;
-	private String titleFilePath = "file/title_message.txt";
+import user.User;
 
-	// object to manipulate login credentials
+/**
+ * Class responsible for an user's login.
+ */
+public class Login {
+	/**
+	 * The title to be shown to user.
+	 */
+	private String title = null;
+	/**
+	 * The path to the file containing the title.
+	 */
+	private final String titleFilePath = "file/title_message.txt";
+	/**
+	 * Object to manipulate login credentials.
+	 */
 	private Credentials credentials;
 
+	/**
+	 * Print the greetings message to the console.
+	 */
 	private void printTitleMenu() {
 		if (title == null) {
 			// get file content from resources folder
@@ -18,10 +32,10 @@ public class Login {
 			InputStream inputStream = classLoader.getResourceAsStream(titleFilePath);
 
 			// create and print title string
-			title = "";
+			StringBuilder title = new StringBuilder();
 			try (Scanner scanner = new Scanner(inputStream)) {
 				while (scanner.hasNext()) {
-					title += scanner.nextLine() + "\n";
+					title.append(scanner.nextLine() + "\n");
 				}
 				System.out.println(title);
 			} catch (Exception e) {
@@ -34,6 +48,9 @@ public class Login {
 		System.out.println("Type 'list' if you want to see available commands!");
 	}
 
+	/**
+	 * Function responsible for interacting with the user and executing commands.
+	 */
 	public void login() {
 		// get credentials manipulation object
 		try {
@@ -49,27 +66,29 @@ public class Login {
 		printTitleMenu();
 
 		// start the loop to accept commands
-		boolean sesssion = true;
-		boolean loggedIn = false;
 		String command;
+		User user = null;
+		boolean sesssion = true;
 		Scanner scanner = new Scanner(System.in);
 		do {
 			command = scanner.nextLine();
 
 			switch (command) {
 			case "login":
-				if (!loggedIn) {
+				if (user == null) {
+					// instantiate user
+					user = new User();
+
 					// get credentials from user
 					System.out.println("Please enter your:");
 					System.out.print("-> username : ");
-					String username = scanner.nextLine();
+					user.setUsername(scanner.nextLine());
 					System.out.print("-> password : ");
-					String password = scanner.nextLine();
+					user.setPassword(scanner.nextLine());
 
 					// check if given credentials are correct
-					if (credentials.checkCredentials(username, password)) {
-						loggedIn = true;
-						System.out.println("Welcome " + username + "!");
+					if (credentials.checkCredentials(user.getUsername(), user.getPassword())) {
+						System.out.println("Welcome " + user.getUsername() + "!");
 					} else {
 						System.out.println("Wrong credentials! Please try again.");
 					}
@@ -78,8 +97,8 @@ public class Login {
 				}
 				break;
 			case "logout":
-				if (loggedIn) {
-					loggedIn = false;
+				if (user != null) {
+					user = null;
 					System.out.println("You have been successfully logged out. We hope you will be back soon!");
 				} else {
 					System.out.println("You must first be logged in!");
@@ -89,11 +108,11 @@ public class Login {
 				sesssion = false;
 				break;
 			case "list":
-				System.out.println("-> login  : login into your account (only if you are not already logged in)");
-				System.out.println("-> logout : logout from your account (only if you are already logged in)");
-				System.out.println("-> exit   : exit from the application");
-				System.out.println("-> list   : see list of available commands");
-				System.out.println("-> title  : print title message");
+				System.out.printf("%s%s%s%s%s",
+						"-> login  : login into your account (only if you are not already logged in) \n",
+						"-> logout : logout from your account (only if you are already logged in) \n",
+						"-> exit   : exit from the application \n", "-> list   : see list of available commands \n",
+						"-> title  : print title message \n");
 				break;
 			case "title":
 				printTitleMenu();

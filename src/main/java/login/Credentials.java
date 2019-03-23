@@ -5,17 +5,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Class responsible for storing and manipulating all credentials.
+ */
 class Credentials {
-	// static variable instance of type Singleton
+	/**
+	 * Instance of type Singleton.
+	 */
 	private static Credentials instance = null;
-
-	// path to the credentials file
-	private String loginFilePath = "file/login_credentials.txt";
-
-	// hash map to store credentials in memory
+	/**
+	 * The path to the file containing all the credentials.
+	 */
+	private final String loginFilePath = "file/login_credentials.txt";
+	/**
+	 * Hash map to store credentials in memory.
+	 */
 	private Map<String, String> credentials;
 
-	// store credentials in memory
+	/**
+	 * Read and store credentials in memory.
+	 */
 	private Credentials() throws IndexOutOfBoundsException, NullPointerException {
 		// get file content from resources folder
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -36,7 +45,11 @@ class Credentials {
 		}
 	}
 
-	// create or return instance of class
+	/**
+	 * Create or return instance of this class.
+	 * 
+	 * @return class instance
+	 */
 	public static Credentials getInstance() {
 		if (instance == null)
 			instance = new Credentials();
@@ -44,7 +57,13 @@ class Credentials {
 		return instance;
 	}
 
-	// check if given credentials are valid
+	/**
+	 * Check if given credentials are valid.
+	 * 
+	 * @param username
+	 * @param password
+	 * @return true or false
+	 */
 	public boolean checkCredentials(String username, String password) {
 		if (credentials.containsKey(username) && credentials.get(username).equals(password)) {
 			return true;
