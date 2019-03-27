@@ -7,14 +7,10 @@
 # BlueJ files
 *.ctxt
 
-# Project specific folders
+# Project specific files and folders
+.*
+!/.gitignore
 target/
-.settings/
-
-# Project specific files
-.classpath
-.project
-.directory
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
