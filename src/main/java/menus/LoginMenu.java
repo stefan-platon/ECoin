@@ -1,7 +1,6 @@
 package menus;
 
 import java.util.List;
-import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +12,8 @@ import utils.FileController;
 /**
  * Class responsible the user login menu.
  */
-public class LoginMenu {
-	
+public class LoginMenu implements Menu {
+
 	private static final Logger logger = LogManager.getLogger(LoginMenu.class);
 
 	private String title = null;
@@ -31,24 +30,24 @@ public class LoginMenu {
 			FileController fileReader = new FileController();
 			List<String[]> fileContent = fileReader.read(TILE_FILE_PATH, "\n");
 
-			StringBuilder titleBuilder = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 			fileContent.forEach((line) -> {
-				titleBuilder.append(line[0] + "\n");
+				builder.append(line[0] + "\n");
 			});
-			title = titleBuilder.toString();
+			title = builder.toString();
 
-			System.out.println(title);
+			console.print(title);
 		} else {
-			System.out.println("Welcome!");
+			console.print("Welcome!");
 		}
 
-		System.out.println("Type 'list' if you want to see available commands!");
+		console.print("Type 'list' if you want to see available commands!");
 	}
 
 	/**
 	 * Function responsible for interacting with the user and executing commands.
 	 */
-	public void login() {
+	public void show() {
 		printTitleMenu();
 
 		// get credentials manipulation object
@@ -58,9 +57,8 @@ public class LoginMenu {
 		String command;
 		User user = null;
 		boolean sesssion = true;
-		Scanner scanner = new Scanner(System.in);
 		do {
-			command = scanner.nextLine();
+			command = console.getLine();
 
 			switch (command) {
 			case "login":
@@ -69,51 +67,47 @@ public class LoginMenu {
 					user = new User();
 
 					// get credentials from user
-					System.out.println("Please enter your:");
-					System.out.print("-> username : ");
-					user.setUsername(scanner.nextLine());
-					System.out.print("-> password : ");
-					user.setPassword(scanner.nextLine());
+					user.setUsername(console.printForResponse("Please enter your: \n -> username : "));
+					user.setPassword(console.printForResponse("-> password : "));
 
 					// check if given credentials are correct
 					if (usersCache.verifyUser(user)) {
 						logger.info("user logged in " + user.getUsername());
-						System.out.println("Welcome " + user.getUsername() + "!");
+						console.print("Welcome " + user.getUsername() + "!");
 					} else {
-						System.out.println("Wrong credentials! Please try again.");
+						console.print("Wrong credentials! Please try again.");
 					}
 				} else {
-					System.out.println("You must first log out!");
+					console.print("You must first log out!");
 				}
 				break;
 			case "logout":
 				if (user != null) {
 					logger.info("user logged out " + user.getUsername());
-					System.out.println("You have been successfully logged out. We hope you will be back soon!");	
+					console.print("You have been successfully logged out. We hope you will be back soon!");
 					user = null;
 				} else {
-					System.out.println("You must first be logged in!");
+					console.print("You must first be logged in!");
 				}
 				break;
 			case "exit":
 				sesssion = false;
 				break;
 			case "list":
-				System.out.printf("%s%s%s%s%s",
-						"-> login  : login into your account (only if you are not already logged in) \n",
-						"-> logout : logout from your account (only if you are already logged in) \n",
-						"-> exit   : exit from the application \n", "-> list   : see list of available commands \n",
-						"-> title  : print title message \n");
+				console.printMultiple("-> login  : login into your account (only if you are not already logged in)",
+						"-> logout : logout from your account (only if you are already logged in)",
+						"-> exit   : exit from the application", "-> list   : see list of available commands",
+						"-> title  : print title message");
 				break;
 			case "title":
 				printTitleMenu();
 				break;
 			default:
-				System.out.println("Unknown command! Please type 'list' to see available commands.");
+				console.print("Unknown command! Please type 'list' to see available commands.");
 			}
 		} while (sesssion);
 
-		scanner.close();
+		console.close();
 	}
 
 }
