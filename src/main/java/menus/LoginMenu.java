@@ -1,48 +1,45 @@
-package login;
+package menus;
 
-import java.io.InputStream;
+import java.util.List;
 import java.util.Scanner;
 
-import user.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import cache.UsersCache;
+import models.User;
+import utils.FileController;
 
 /**
- * Class responsible for an user's login.
+ * Class responsible the user login menu.
  */
-public class Login {
-	/**
-	 * The title to be shown to user.
-	 */
+public class LoginMenu {
+	
+	private static final Logger logger = LogManager.getLogger(LoginMenu.class);
+
 	private String title = null;
-	/**
-	 * The path to the file containing the title.
-	 */
-	private final String titleFilePath = "file/title_message.txt";
-	/**
-	 * Object to manipulate login credentials.
-	 */
-	private Credentials credentials;
+
+	private final String TILE_FILE_PATH = "files/title_message.txt";
+
+	private UsersCache usersCache;
 
 	/**
 	 * Print the greetings message to the console.
 	 */
 	private void printTitleMenu() {
 		if (title == null) {
-			// get file content from resources folder
-			ClassLoader classLoader = getClass().getClassLoader();
-			InputStream inputStream = classLoader.getResourceAsStream(titleFilePath);
+			FileController fileReader = new FileController();
+			List<String[]> fileContent = fileReader.read(TILE_FILE_PATH, "\n");
 
-			// create and print title string
-			StringBuilder title = new StringBuilder();
-			try (Scanner scanner = new Scanner(inputStream)) {
-				while (scanner.hasNext()) {
-					title.append(scanner.nextLine() + "\n");
-				}
-				System.out.println(title);
-			} catch (Exception e) {
-				System.out.println("Welcome!");
-			}
-		} else {
+			StringBuilder titleBuilder = new StringBuilder();
+			fileContent.forEach((line) -> {
+				titleBuilder.append(line[0] + "\n");
+			});
+			title = titleBuilder.toString();
+
 			System.out.println(title);
+		} else {
+			System.out.println("Welcome!");
 		}
 
 		System.out.println("Type 'list' if you want to see available commands!");
@@ -52,18 +49,10 @@ public class Login {
 	 * Function responsible for interacting with the user and executing commands.
 	 */
 	public void login() {
-		// get credentials manipulation object
-		try {
-			credentials = Credentials.getInstance();
-		} catch (IndexOutOfBoundsException e) {
-			System.out.println("Credentials file is not well formatted!");
-			return;
-		} catch (NullPointerException e) {
-			System.out.println("File not found!");
-			return;
-		}
-
 		printTitleMenu();
+
+		// get credentials manipulation object
+		usersCache = UsersCache.getInstance();
 
 		// start the loop to accept commands
 		String command;
@@ -87,7 +76,8 @@ public class Login {
 					user.setPassword(scanner.nextLine());
 
 					// check if given credentials are correct
-					if (credentials.checkCredentials(user.getUsername(), user.getPassword())) {
+					if (usersCache.verifyUser(user)) {
+						logger.info("user logged in " + user.getUsername());
 						System.out.println("Welcome " + user.getUsername() + "!");
 					} else {
 						System.out.println("Wrong credentials! Please try again.");
@@ -98,8 +88,9 @@ public class Login {
 				break;
 			case "logout":
 				if (user != null) {
+					logger.info("user logged out " + user.getUsername());
+					System.out.println("You have been successfully logged out. We hope you will be back soon!");	
 					user = null;
-					System.out.println("You have been successfully logged out. We hope you will be back soon!");
 				} else {
 					System.out.println("You must first be logged in!");
 				}
