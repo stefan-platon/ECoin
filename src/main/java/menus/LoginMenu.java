@@ -68,7 +68,7 @@ public class LoginMenu implements Menu {
 
 					// get credentials from user
 					user.setUsername(console.printForResponse("Please enter your: \n -> username : "));
-					user.setPassword(console.printForResponse("-> password : "));
+					user.setPassword(console.printForResponse(" -> password : "));
 
 					// check if given credentials are correct
 					if (usersCache.verifyUser(user)) {

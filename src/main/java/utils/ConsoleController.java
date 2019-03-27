@@ -25,7 +25,7 @@ public class ConsoleController {
 	}
 	
 	public String printForResponse(String string) {
-		System.out.println(string);
+		System.out.print(string);
 		return scanner.nextLine();
 	}
 	
