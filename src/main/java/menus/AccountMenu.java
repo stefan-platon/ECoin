@@ -10,7 +10,6 @@ import cache.AccountsCache;
 import exceptions.DataValidationException;
 import models.Account;
 import models.User;
-import utils.FileController;
 
 /**
  * Class responsible the user account menu.
@@ -29,27 +28,8 @@ public class AccountMenu extends Menu {
 		this.user = user;
 	}
 
-	void printTitle() {
-		if (title == null) {
-			FileController fileReader = new FileController();
-			List<String[]> fileContent = fileReader.readResource(TILE_FILE_PATH, "\n");
-
-			StringBuilder builder = new StringBuilder();
-			fileContent.forEach((line) -> {
-				builder.append(line[0] + "\n");
-			});
-			title = builder.toString();
-
-			console.print(title);
-		} else {
-			console.print(title);
-		}
-
-		console.print("Type 'man' if you want to see available commands!");
-	}
-
 	public void show() {
-		printTitle();
+		printTitle(TILE_FILE_PATH);
 
 		// get accounts manipulation object
 		accountsCache = AccountsCache.getInstance();
@@ -104,7 +84,7 @@ public class AccountMenu extends Menu {
 						"-> back : go back to main menu \n", "-> list   : see list of available commands \n");
 				break;
 			case "title":
-				printTitle();
+				printTitle(TILE_FILE_PATH);
 				break;
 			default:
 				console.print("Unknown command! Please type 'man' to see available commands.");

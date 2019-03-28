@@ -1,13 +1,10 @@
 package menus;
 
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cache.UsersCache;
 import models.User;
-import utils.FileController;
 
 /**
  * Class responsible the user login menu.
@@ -19,28 +16,9 @@ public class LoginMenu extends Menu {
 	private final String TILE_FILE_PATH = "files/login_menu_title.txt";
 
 	private UsersCache usersCache;
-	
-	void printTitle() {
-		if (title == null) {
-			FileController fileReader = new FileController();
-			List<String[]> fileContent = fileReader.readResource(TILE_FILE_PATH, "\n");
-
-			StringBuilder builder = new StringBuilder();
-			fileContent.forEach((line) -> {
-				builder.append(line[0] + "\n");
-			});
-			title = builder.toString();
-
-			console.print(title);
-		} else {
-			console.print(title);
-		}
-
-		console.print("Type 'man' if you want to see available commands!");
-	}
 
 	public void show() {
-		printTitle();
+		printTitle(TILE_FILE_PATH);
 
 		// get credentials manipulation object
 		usersCache = UsersCache.getInstance();
@@ -87,7 +65,7 @@ public class LoginMenu extends Menu {
 					AccountMenu accountMenu = new AccountMenu(user);
 					accountMenu.show();
 					// on return, show title message
-					printTitle();
+					printTitle(TILE_FILE_PATH);
 				} else {
 					console.print("You must first be logged in!");
 				}
@@ -102,7 +80,7 @@ public class LoginMenu extends Menu {
 						"-> title  : print title message \n");
 				break;
 			case "title":
-				printTitle();
+				printTitle(TILE_FILE_PATH);
 				break;
 			default:
 				console.print("Unknown command! Please type 'man' to see available commands.");

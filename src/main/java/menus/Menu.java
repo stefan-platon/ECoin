@@ -1,6 +1,9 @@
 package menus;
 
+import java.util.List;
+
 import utils.ConsoleController;
+import utils.FileController;
 
 abstract class Menu {
 	
@@ -16,6 +19,23 @@ abstract class Menu {
 	/**
 	 * Print the greetings message to the console.
 	 */
-	abstract void printTitle();
+	void printTitle(String TILE_FILE_PATH) {
+		if (title == null) {
+			FileController fileReader = new FileController();
+			List<String[]> fileContent = fileReader.readResource(TILE_FILE_PATH, "\n");
+
+			StringBuilder builder = new StringBuilder();
+			fileContent.forEach((line) -> {
+				builder.append(line[0] + "\n");
+			});
+			title = builder.toString();
+
+			console.print(title);
+		} else {
+			console.print(title);
+		}
+
+		console.print("Type 'man' if you want to see available commands!");
+	}
 
 }
