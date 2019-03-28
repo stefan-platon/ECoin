@@ -12,23 +12,18 @@ import utils.FileController;
 /**
  * Class responsible the user login menu.
  */
-public class LoginMenu implements Menu {
+public class LoginMenu extends Menu {
 
 	private static final Logger logger = LogManager.getLogger(LoginMenu.class);
 
-	private String title = null;
-
-	private final String TILE_FILE_PATH = "files/title_message.txt";
+	private final String TILE_FILE_PATH = "files/login_menu_title.txt";
 
 	private UsersCache usersCache;
-
-	/**
-	 * Print the greetings message to the console.
-	 */
-	private void printTitleMenu() {
+	
+	void printTitle() {
 		if (title == null) {
 			FileController fileReader = new FileController();
-			List<String[]> fileContent = fileReader.read(TILE_FILE_PATH, "\n");
+			List<String[]> fileContent = fileReader.readResource(TILE_FILE_PATH, "\n");
 
 			StringBuilder builder = new StringBuilder();
 			fileContent.forEach((line) -> {
@@ -38,17 +33,14 @@ public class LoginMenu implements Menu {
 
 			console.print(title);
 		} else {
-			console.print("Welcome!");
+			console.print(title);
 		}
 
-		console.print("Type 'list' if you want to see available commands!");
+		console.print("Type 'man' if you want to see available commands!");
 	}
 
-	/**
-	 * Function responsible for interacting with the user and executing commands.
-	 */
 	public void show() {
-		printTitleMenu();
+		printTitle();
 
 		// get credentials manipulation object
 		usersCache = UsersCache.getInstance();
@@ -58,12 +50,11 @@ public class LoginMenu implements Menu {
 		User user = null;
 		boolean sesssion = true;
 		do {
-			command = console.getLine();
+			command = console.printForResponse("> ");
 
 			switch (command) {
 			case "login":
 				if (user == null) {
-					// instantiate user
 					user = new User();
 
 					// get credentials from user
@@ -90,20 +81,31 @@ public class LoginMenu implements Menu {
 					console.print("You must first be logged in!");
 				}
 				break;
+			case "account":
+				if (user != null) {
+					// got to account menu
+					AccountMenu accountMenu = new AccountMenu(user);
+					accountMenu.show();
+					// on return, show title message
+					printTitle();
+				} else {
+					console.print("You must first be logged in!");
+				}
+				break;
 			case "exit":
 				sesssion = false;
 				break;
-			case "list":
-				console.printMultiple("-> login  : login into your account (only if you are not already logged in)",
-						"-> logout : logout from your account (only if you are already logged in)",
-						"-> exit   : exit from the application", "-> list   : see list of available commands",
-						"-> title  : print title message");
+			case "man":
+				console.printMultiple("-> login  : login into your account (only if you are not already logged in \n)",
+						"-> logout : logout from your account (only if you are already logged in) \n",
+						"-> exit   : exit from the application \n", "-> list   : see list of available commands \n",
+						"-> title  : print title message \n");
 				break;
 			case "title":
-				printTitleMenu();
+				printTitle();
 				break;
 			default:
-				console.print("Unknown command! Please type 'list' to see available commands.");
+				console.print("Unknown command! Please type 'man' to see available commands.");
 			}
 		} while (sesssion);
 
