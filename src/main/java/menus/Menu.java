@@ -2,10 +2,20 @@ package menus;
 
 import utils.ConsoleController;
 
-interface Menu {
+abstract class Menu {
 	
-	ConsoleController console = new ConsoleController();
+	protected String title = null;
+	
+	protected ConsoleController console = new ConsoleController();
 
-	void show();
+	/**
+	 * Function responsible for interacting with the user and executing commands.
+	 */
+	public abstract void show();
+	
+	/**
+	 * Print the greetings message to the console.
+	 */
+	abstract void printTitle();
 
 }
