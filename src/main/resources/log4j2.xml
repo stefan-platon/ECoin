@@ -19,7 +19,7 @@
 	</Appenders>
 	<Loggers>
 		<Root level="all">
-			<AppenderRef ref="STDOUT" level="trace" />
+			<AppenderRef ref="STDOUT" level="error" />
 			<AppenderRef ref="FILE" level="info" />
 		</Root>
 	</Loggers>
