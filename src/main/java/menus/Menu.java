@@ -19,10 +19,10 @@ abstract class Menu {
 	/**
 	 * Print the greetings message to the console.
 	 */
-	void printTitle(String TILE_FILE_PATH) {
+	void printTitle(String path) {
 		if (title == null) {
 			FileController fileReader = new FileController();
-			List<String[]> fileContent = fileReader.readResource(TILE_FILE_PATH, "\n");
+			List<String[]> fileContent = fileReader.readResource(path, "\n");
 
 			StringBuilder builder = new StringBuilder();
 			fileContent.forEach((line) -> {
