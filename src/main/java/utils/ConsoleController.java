@@ -14,7 +14,7 @@ public class ConsoleController {
 		StringBuilder builder = new StringBuilder();
 		
 	    for (String string : strings) {
-	        builder.append(string + "\n");
+	        builder.append(string);
 	    }
 	    
 	    System.out.println(builder.toString());

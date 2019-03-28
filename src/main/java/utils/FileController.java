@@ -7,6 +7,9 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 
 public class FileController {
@@ -14,6 +17,24 @@ public class FileController {
 	private static final Logger logger = LogManager.getLogger(FileController.class);
 
 	public List<String[]> read(String path, String delimiter) {
+		// parse file content
+		List<String[]> response = new ArrayList<>();
+		try (Scanner scanner = new Scanner(new File(path))) {
+			String line;
+			while (scanner.hasNextLine()) {
+				line = scanner.nextLine();
+				response.add(line.split(delimiter, -1));
+			}
+		} catch (Exception e) {
+			logger.error("file not found : " + path);
+			System.out.println("Database file not found. Please contact support.");
+			System.exit(-1);
+		}
+
+		return response;
+	}
+	
+	public List<String[]> readResource(String path, String delimiter) {
 		// get file content
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream(path);
@@ -26,13 +47,23 @@ public class FileController {
 				line = scanner.nextLine();
 				response.add(line.split(delimiter, -1));
 			}
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			logger.error("file not found : " + path);
 			System.out.println("Resource file not found. Please contact support.");
 			System.exit(-1);
 		}
 
 		return response;
+	}
+
+	public void write(String path, Object object) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+			bw.write(object.toString());
+		} catch (Exception e) {
+			logger.error("could not insert " + object.getClass() + " : " + path + " : " + e.getMessage());
+			System.out.println("There was a problem while saving the data.");
+			System.out.println("If the problem persists, please contact support.");
+		}
 	}
 
 }
