@@ -1,11 +1,10 @@
 package models;
 
-/**
- * Class describing an user.
- */
 public class User {
 
-	private String username, password;
+	private String username;
+
+	private String password;
 
 	public String getUsername() {
 		return username;
@@ -43,14 +42,10 @@ public class User {
 
 		User other = (User) obj;
 
-		if (password == null && other.password != null) {
-			return false;
-		} else if (!password.equals(other.password))
+		if (!password.equals(other.password))
 			return false;
 
-		if (username == null && other.username != null) {
-			return false;
-		} else if (!username.equals(other.username))
+		if (!username.equals(other.username))
 			return false;
 
 		return true;
