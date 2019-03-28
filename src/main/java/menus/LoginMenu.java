@@ -3,7 +3,7 @@ package menus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import cache.UsersCache;
+import caches.UsersCache;
 import models.User;
 
 /**

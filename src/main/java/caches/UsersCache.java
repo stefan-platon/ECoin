@@ -1,4 +1,4 @@
-package cache;
+package caches;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,10 @@ public class UsersCache extends Cache{
 	 * Read and store credentials in memory.
 	 */
 	private UsersCache() {
+		loadData();
+	}
+	
+	protected void loadData() {
 		List<String[]> fileContent = fileController.read(LOGIN_FILE_PATH, " ");
 
 		users = new ArrayList<>();

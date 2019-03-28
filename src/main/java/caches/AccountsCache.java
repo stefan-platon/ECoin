@@ -1,4 +1,4 @@
-package cache;
+package caches;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +29,10 @@ public class AccountsCache extends Cache {
 	 * Read and store accounts in memory.
 	 */
 	private AccountsCache() {
+		loadData();
+	}
+	
+	protected void loadData() {
 		List<String[]> fileContent = fileController.read(ACCOUNTS_FILE_PATH, " ");
 
 		accounts = new ArrayList<>();
@@ -75,7 +79,11 @@ public class AccountsCache extends Cache {
 		account.setBalance(balance);
 		account.setAccountType(accountType);
 
+		// save to file
 		fileController.write(ACCOUNTS_FILE_PATH, account);
+		
+		// add to collection
+		accounts.add(account);
 	}
 
 	/**
