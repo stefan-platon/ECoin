@@ -9,7 +9,7 @@ abstract class Menu {
 	
 	protected String title = null;
 	
-	protected ConsoleController console = new ConsoleController();
+	protected static ConsoleController console = new ConsoleController();
 
 	/**
 	 * Function responsible for interacting with the user and executing commands.
