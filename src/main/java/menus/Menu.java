@@ -2,20 +2,23 @@ package menus;
 
 import java.util.List;
 
+import controllers.UserController;
 import utils.ConsoleController;
 import utils.FileController;
 
 abstract class Menu {
-	
+
 	protected String title = null;
-	
+
+	protected static UserController user = null;
+
 	protected static ConsoleController console = new ConsoleController();
 
 	/**
 	 * Function responsible for interacting with the user and executing commands.
 	 */
 	public abstract void show();
-	
+
 	/**
 	 * Print the greetings message to the console.
 	 */

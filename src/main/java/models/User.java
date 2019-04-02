@@ -1,10 +1,15 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 
-	private String username;
+	protected String username;
 
-	private String password;
+	protected String password;
+
+	protected List<Account> accounts;
 
 	public String getUsername() {
 		return username;
@@ -22,13 +27,12 @@ public class User {
 		this.password = password;
 	}
 
-	public User() {
-
+	public List<Account> getAccounts() {
+		return accounts;
 	}
 
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
+	protected User() {
+		accounts = new ArrayList<>();
 	}
 
 	@Override
