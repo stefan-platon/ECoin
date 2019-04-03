@@ -11,13 +11,13 @@ public class Account {
 	// static collection to store possible account types
 	static Set<String> accountTypeSet = Utils.newHashSet("EUR", "RON");
 
-	private String accountNumber;
+	protected String accountNumber;
 
-	private String username;
+	protected String username;
 
-	private BigDecimal balance;
+	protected BigDecimal balance;
 
-	private String accountType;
+	protected String accountType;
 
 	public String getAccountNumber() {
 		return accountNumber;
@@ -63,21 +63,12 @@ public class Account {
 		this.accountType = accountType;
 	}
 
-	public Account() {
+	protected Account() {
 
 	}
 
-	public Account(String accountNumber, String username, BigDecimal balance, String accountType) {
-		this.accountNumber = accountNumber;
-		this.username = username;
-		this.balance = balance;
-		this.accountType = accountType;
-	}
+	protected Account(String accountNumber, String username, BigDecimal balance, String accountType) {
 
-	@Override
-	public String toString() {
-		return new StringBuilder(this.accountNumber).append(" ").append(this.username).append(" ").append(this.balance)
-				.append(" ").append(this.accountType).append("\n").toString();
 	}
 
 }

@@ -5,11 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import controllers.AccountController;
 import models.Account;
 
 public class Utils {
 
-	public static final String[][] createAccountsListTable(List<Account> accounts, String... columns) {
+	public static final String[][] createAccountsListTable(List<AccountController> accounts, String... columns) {
 		String[][] elements = new String[accounts.size() + 1][columns.length];
 
 		// set column headers
@@ -22,6 +23,9 @@ public class Utils {
 		for (Account account : accounts) {
 			for (int col = 0; col < columns.length; col++) {
 				switch (elements[0][col]) {
+				case "User":
+					elements[line][col] = account.getUsername();
+					break;
 				case "Number":
 					elements[line][col] = account.getAccountNumber();
 					break;

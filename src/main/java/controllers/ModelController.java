@@ -1,6 +1,7 @@
 package controllers;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +11,14 @@ public class ModelController implements Controller {
 
 	private static final Logger logger = LogManager.getLogger(ModelController.class);
 
-	public static UserController findUser(String username, String password) {
+	/**
+	 * Get user and its accounts
+	 * 
+	 * @param username
+	 * @param password
+	 * @return UserController
+	 */
+	public static UserController getUser(String username, String password) {
 		UserController user = null;
 		List<String[]> fileContent = null;
 
@@ -37,7 +45,7 @@ public class ModelController implements Controller {
 			try {
 				for (String[] line : fileContent) {
 					if (username.equals(line[1])) {
-						user.addAccount(line[0], line[1], new BigDecimal(line[2]), line[3]);
+						user.addAccount(line[0], new BigDecimal(line[2]), line[3]);
 					}
 				}
 			} catch (IndexOutOfBoundsException e) {
@@ -48,6 +56,57 @@ public class ModelController implements Controller {
 		}
 
 		return user;
+	}
+
+	/**
+	 * Find accounts of the same type
+	 * 
+	 * @param type
+	 * @return List<Account>
+	 */
+	public static List<AccountController> getAccountsByType(String accountType) {
+		List<String[]> fileContent = fileController.read(ACCOUNTS_FILE_PATH, " ");
+		List<AccountController> response = new ArrayList<>();
+
+		try {
+			for (String[] line : fileContent) {
+				if (accountType.equals(line[3])) {
+					response.add(new AccountController(line[0], line[1], new BigDecimal(line[2]), line[3]));
+				}
+			}
+		} catch (IndexOutOfBoundsException e) {
+			logger.fatal("accounts file not well formatted : " + ACCOUNTS_FILE_PATH);
+			System.out.println("There was a problem reading accounts from database.");
+			System.exit(-1);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Find accounts of the same type except a certain account
+	 * 
+	 * @param accountType
+	 * @param accountNumber
+	 * @return List<Account>
+	 */
+	public static List<AccountController> getAccountsByTypeExcept(String accountType, String accountNumber) {
+		List<String[]> fileContent = fileController.read(ACCOUNTS_FILE_PATH, " ");
+		List<AccountController> response = new ArrayList<>();
+
+		try {
+			for (String[] line : fileContent) {
+				if (accountType.equals(line[3]) && !accountNumber.equals(line[1])) {
+					response.add(new AccountController(line[0], line[1], new BigDecimal(line[2]), line[3]));
+				}
+			}
+		} catch (IndexOutOfBoundsException e) {
+			logger.fatal("accounts file not well formatted : " + ACCOUNTS_FILE_PATH);
+			System.out.println("There was a problem reading accounts from database.");
+			System.exit(-1);
+		}
+
+		return response;
 	}
 
 }

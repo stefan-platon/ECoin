@@ -76,7 +76,6 @@ public class ConsoleController {
 			builder.append("+");
 			builder.append(StringUtils.repeat("-", maxLength + 2));
 		}
-		builder.append("\n");
 
 		System.out.println(builder.toString());
 	}

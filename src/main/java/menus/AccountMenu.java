@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import controllers.AccountController;
 import exceptions.DataValidationException;
 import models.Account;
 import utils.Utils;
@@ -30,33 +31,13 @@ public class AccountMenu extends Menu {
 
 			switch (command) {
 			case "create":
-				// get data from user
-				String accountNumber = console.printForResponse("Please enter your: \n -> account number : ");
-				String accountType = console.printForResponse(" -> account type : ");
-
-				BigDecimal balance;
-				switch (console.printForResponse("Type y if you want to add a sum right away : ")) {
-				case "y":
-					balance = new BigDecimal(console.printForResponse(" -> sum : "));
-					break;
-				default:
-					balance = new BigDecimal(0);
-					break;
-				}
-
-				try {
-					user.createAccount(accountNumber, user.getUsername(), balance, accountType);
-
-					logger.info("new account : " + user.getUsername());
-					console.print("Account created succesfully!");
-				} catch (DataValidationException e) {
-					console.print(e.getMessage());
-				}
+				console.print(create());
 				break;
 			case "list":
-				// list all of the user's accounts
-				List<Account> accounts = user.getAccounts();
-				console.printTable(Utils.createAccountsListTable(accounts, "Number", "Balance", "Type"));
+				console.printTable(Utils.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+				break;
+			case "transfer":
+				console.print(transfer());
 				break;
 			case "back":
 				sesssion = false;
@@ -69,9 +50,89 @@ public class AccountMenu extends Menu {
 				printTitle(TILE_FILE_PATH);
 				break;
 			default:
-				console.print("Unknown command! Please type 'man' to see available commands.");
+				console.print("Unknown command! Type 'man' to see available commands.");
 			}
 		} while (sesssion);
+	}
+
+	private String create() {
+		// get data from user
+		String accountNumber = console.printForResponse("Please enter your: \n -> account number : ");
+		String accountType = console.printForResponse(" -> account type : ");
+
+		BigDecimal balance;
+		switch (console.printForResponse("Type y if you want to add a sum right away : ")) {
+		case "y":
+			try {
+				balance = new BigDecimal(console.printForResponse(" -> sum : "));
+			} catch (NumberFormatException e) {
+				return "Invalid sum!";
+			}
+			break;
+		default:
+			balance = new BigDecimal(0);
+			break;
+		}
+
+		try {
+			user.createAccount(accountNumber, balance, accountType);
+			logger.info("new account : " + user.getUsername());
+			return "Account created succesfully!";
+		} catch (DataValidationException e) {
+			return e.getMessage();
+		}
+	}
+
+	private String transfer() {
+		// list all of the user's accounts
+		console.printTable(Utils.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+
+		// get source account
+		String accountNumber = console.printForResponse("Select one of your accounts: \n -> account : ");
+		Account accountFrom = user.getAccountByAccountNumber(accountNumber);
+
+		if (accountFrom != null) {
+			String accountType = accountFrom.getAccountType();
+
+			// list all compatible accounts
+			List<AccountController> destinationAccounts;
+//			switch (console.printForResponse("Type y if you want to see other users as well : ")) {
+//			case "y":
+//				destinationAccounts = ModelController.getAccountsByTypeExcept(accountType, accountNumber);
+//				console.printTable(
+//						Utils.createAccountsListTable(destinationAccounts, "User", "Number", "Balance", "Type"));
+//				break;
+//			default:
+//				destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
+//				console.printTable(Utils.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
+//				break;
+//			}
+			destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
+			console.printTable(Utils.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
+
+			// get destination account
+			accountNumber = console.printForResponse("Select destination account: \n -> account : ");
+			Account accountTo = user.getAccountByAccountNumber(accountNumber);
+
+			if (accountTo != null && destinationAccounts.contains(accountTo)) {
+				try {
+					BigDecimal amount = new BigDecimal(
+							console.printForResponse("Enter how much do you want to transfer: \n -> sum : "));
+					if (amount.compareTo(accountFrom.getBalance()) == 1) {
+						return "Entered sum is too big for this account!";
+					}
+
+					// execute the transfer
+					return "Transfer successful!";
+				} catch (NumberFormatException e) {
+					return "Invalid sum!";
+				}
+			} else {
+				return "Invalid destination account!";
+			}
+		} else {
+			return "Invalid source account!";
+		}
 	}
 
 }

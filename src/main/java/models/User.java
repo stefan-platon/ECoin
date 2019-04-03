@@ -1,7 +1,8 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import controllers.AccountController;
 
 public class User {
 
@@ -9,7 +10,7 @@ public class User {
 
 	protected String password;
 
-	protected List<Account> accounts;
+	protected List<AccountController> accounts;
 
 	public String getUsername() {
 		return username;
@@ -27,12 +28,12 @@ public class User {
 		this.password = password;
 	}
 
-	public List<Account> getAccounts() {
+	public List<AccountController> getAccounts() {
 		return accounts;
 	}
 
 	protected User() {
-		accounts = new ArrayList<>();
+
 	}
 
 }

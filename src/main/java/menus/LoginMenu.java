@@ -25,42 +25,14 @@ public class LoginMenu extends Menu {
 
 			switch (command) {
 			case "login":
-				if (user == null) {
-					// get credentials from console
-					String username = console.printForResponse("Please enter your: \n -> username : ");
-					String password = console.printForResponse(" -> password : ");
-
-					// get user based on credentials
-					user = ModelController.findUser(username, password);
-					if (user != null) {
-						logger.info("user logged in : " + user.getUsername());
-						console.print("Welcome " + user.getUsername() + "!");
-					} else {
-						console.print("Wrong credentials! Please try again.");
-					}
-				} else {
-					console.print("You must first log out!");
-				}
+				console.print(login());
 				break;
 			case "logout":
-				if (user != null) {
-					logger.info("user logged out : " + user.getUsername());
-					console.print("You have been successfully logged out. We hope you will be back soon!");
-					user = null;
-				} else {
-					console.print("You must first be logged in!");
-				}
+				console.print(logout());
 				break;
 			case "account":
-				if (user != null) {
-					// got to account menu
-					AccountMenu accountMenu = new AccountMenu();
-					accountMenu.show();
-					// on return, show title message
-					printTitle(TILE_FILE_PATH);
-				} else {
-					console.print("You must first be logged in!");
-				}
+				console.print(account());
+				printTitle(TILE_FILE_PATH);
 				break;
 			case "exit":
 				sesssion = false;
@@ -75,11 +47,51 @@ public class LoginMenu extends Menu {
 				printTitle(TILE_FILE_PATH);
 				break;
 			default:
-				console.print("Unknown command! Please type 'man' to see available commands.");
+				console.print("Unknown command! Type 'man' to see available commands.");
 			}
 		} while (sesssion);
 
 		console.close();
+	}
+
+	private String login() {
+		if (user == null) {
+			// get credentials from console
+			String username = console.printForResponse("Enter your: \n -> username : ");
+			String password = console.printForResponse(" -> password : ");
+
+			// get user based on credentials
+			user = ModelController.getUser(username, password);
+			if (user != null) {
+				logger.info("user logged in : " + user.getUsername());
+				return "Welcome " + user.getUsername() + "!";
+			} else {
+				return "Wrong credentials! Try again.";
+			}
+		} else {
+			return "You must first log out!";
+		}
+	}
+
+	private String logout() {
+		if (user != null) {
+			user = null;
+			logger.info("user logged out : " + user.getUsername());
+			return "You have been successfully logged out. We hope you will be back soon!";
+		} else {
+			return "You must first be logged in!";
+		}
+	}
+
+	private String account() {
+		if (user != null) {
+			// got to account menu
+			AccountMenu accountMenu = new AccountMenu();
+			accountMenu.show();
+			return "";
+		} else {
+			return "You must first be logged in!";
+		}
 	}
 
 }
