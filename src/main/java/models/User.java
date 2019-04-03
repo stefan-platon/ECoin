@@ -35,24 +35,4 @@ public class User {
 		accounts = new ArrayList<>();
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-
-		User other = (User) obj;
-
-		if (!password.equals(other.password))
-			return false;
-
-		if (!username.equals(other.username))
-			return false;
-
-		return true;
-	}
-
 }

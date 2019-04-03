@@ -1,16 +1,15 @@
 package models;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import exceptions.DataValidationException;
+import utils.Utils;
 
 public class Account {
 
 	// static collection to store possible account types
-	static Set<String> accountTypeSet = newHashSet("EUR", "RON");
+	static Set<String> accountTypeSet = Utils.newHashSet("EUR", "RON");
 
 	private String accountNumber;
 
@@ -76,52 +75,9 @@ public class Account {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-
-		Account other = (Account) obj;
-
-		if (!accountNumber.equals(other.accountNumber))
-			return false;
-
-		if (accountType != other.accountType)
-			return false;
-
-		if (!balance.equals(other.balance))
-			return false;
-
-		if (!username.equals(other.username))
-			return false;
-
-		return true;
-	}
-
-	@Override
 	public String toString() {
 		return new StringBuilder(this.accountNumber).append(" ").append(this.username).append(" ").append(this.balance)
 				.append(" ").append(this.accountType).append("\n").toString();
-	}
-	
-	public boolean checkUser(User user) {
-		return this.username.equals(user.getUsername());
-	}
-
-	/**
-	 * Method to populate a hash set with given elements
-	 * 
-	 * @param objs
-	 * @return
-	 */
-	@SafeVarargs
-	public static final <T> Set<T> newHashSet(T... objs) {
-		Set<T> set = new HashSet<T>();
-		Collections.addAll(set, objs);
-		return set;
 	}
 
 }

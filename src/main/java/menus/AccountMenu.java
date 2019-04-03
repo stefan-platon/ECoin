@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import exceptions.DataValidationException;
 import models.Account;
+import utils.Utils;
 
 /**
  * Class responsible the user account menu.
@@ -55,12 +56,7 @@ public class AccountMenu extends Menu {
 			case "list":
 				// list all of the user's accounts
 				List<Account> accounts = user.getAccounts();
-				accounts.forEach((account) -> {
-					console.printMultiple("<------------------------------->", "\n", "Number : ",
-							account.getAccountNumber(), "\n", "Balance : ", account.getBalance().toString(), " ",
-							account.getAccountType());
-				});
-				console.print("<------------------------------->");
+				console.printTable(Utils.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 				break;
 			case "back":
 				sesssion = false;
