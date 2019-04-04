@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import controllers.AccountController;
 import exceptions.DataValidationException;
-import models.Account;
 import utils.Utils;
 
 /**
@@ -89,7 +88,7 @@ public class AccountMenu extends Menu {
 
 		// get source account
 		String accountNumber = console.printForResponse("Select one of your accounts: \n -> account : ");
-		Account accountFrom = user.getAccountByAccountNumber(accountNumber);
+		AccountController accountFrom = user.getAccountByAccountNumber(accountNumber);
 
 		if (accountFrom != null) {
 			String accountType = accountFrom.getAccountType();
@@ -112,18 +111,20 @@ public class AccountMenu extends Menu {
 
 			// get destination account
 			accountNumber = console.printForResponse("Select destination account: \n -> account : ");
-			Account accountTo = user.getAccountByAccountNumber(accountNumber);
+			AccountController accountTo = null;
+			for (AccountController account : destinationAccounts) {
+				if(accountNumber.equals(account.getAccountNumber())){
+					accountTo = account;
+					break;
+				}
+			}
 
-			if (accountTo != null && destinationAccounts.contains(accountTo)) {
+			if (accountTo != null) {
 				try {
 					BigDecimal amount = new BigDecimal(
-							console.printForResponse("Enter how much do you want to transfer: \n -> sum : "));
-					if (amount.compareTo(accountFrom.getBalance()) == 1) {
-						return "Entered sum is too big for this account!";
-					}
-
+							console.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
 					// execute the transfer
-					return "Transfer successful!";
+					return accountFrom.transfer(accountTo, amount);
 				} catch (NumberFormatException e) {
 					return "Invalid sum!";
 				}

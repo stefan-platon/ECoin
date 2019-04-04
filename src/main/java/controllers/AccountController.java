@@ -23,4 +23,15 @@ public class AccountController extends Account {
 				.append(" ").append(this.accountType).append("\n").toString();
 	}
 
+	public String transfer(AccountController accountTo, BigDecimal amount) {
+		if (this.getBalance().compareTo(amount) == -1) {
+			return "Entered sum is too big for this account!";
+		}
+
+		balance = balance.subtract(amount);
+		accountTo.balance = accountTo.balance.add(amount);
+
+		return "Transfer successful!";
+	}
+
 }

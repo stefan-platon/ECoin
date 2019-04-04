@@ -57,6 +57,24 @@ public class ModelController implements Controller {
 
 		return user;
 	}
+	
+	public static AccountController getAccountByAccountNumber(String accountNumber) {
+		List<String[]> fileContent = fileController.read(ACCOUNTS_FILE_PATH, " ");
+
+		try {
+			for (String[] line : fileContent) {
+				if (accountNumber.equals(line[0])) {
+					return new AccountController(line[0], line[1], new BigDecimal(line[2]), line[3]);
+				}
+			}
+		} catch (IndexOutOfBoundsException e) {
+			logger.fatal("accounts file not well formatted : " + ACCOUNTS_FILE_PATH);
+			System.out.println("There was a problem reading accounts from database.");
+			System.exit(-1);
+		}
+
+		return null;
+	}
 
 	/**
 	 * Find accounts of the same type
@@ -84,11 +102,11 @@ public class ModelController implements Controller {
 	}
 
 	/**
-	 * Find accounts of the same type except a certain account
+	 * Find accounts of the same type except certain accounts
 	 * 
 	 * @param accountType
 	 * @param accountNumber
-	 * @return List<Account>
+	 * @return List<AccountController>
 	 */
 	public static List<AccountController> getAccountsByTypeExcept(String accountType, String accountNumber) {
 		List<String[]> fileContent = fileController.read(ACCOUNTS_FILE_PATH, " ");
@@ -96,7 +114,7 @@ public class ModelController implements Controller {
 
 		try {
 			for (String[] line : fileContent) {
-				if (accountType.equals(line[3]) && !accountNumber.equals(line[1])) {
+				if (accountType.equals(line[3]) && !accountNumber.equals(line[0])) {
 					response.add(new AccountController(line[0], line[1], new BigDecimal(line[2]), line[3]));
 				}
 			}

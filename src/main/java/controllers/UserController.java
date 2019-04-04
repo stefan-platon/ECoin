@@ -75,11 +75,11 @@ public class UserController extends User implements Controller {
 	}
 
 	/**
-	 * Find accounts of the same type except a certain account
+	 * Find accounts of the same type except certain accounts
 	 * 
 	 * @param accountType
 	 * @param accountNumber
-	 * @return List<Account>
+	 * @return List<AccountController>
 	 */
 	public List<AccountController> getAccountsByTypeExcept(String accountType, String accountNumber) {
 		List<AccountController> response = new ArrayList<>();

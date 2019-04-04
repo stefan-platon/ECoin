@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import controllers.AccountController;
-import models.Account;
 
 public class Utils {
 
@@ -20,7 +19,7 @@ public class Utils {
 
 		// fill table with accounts data
 		int line = 1;
-		for (Account account : accounts) {
+		for (AccountController account : accounts) {
 			for (int col = 0; col < columns.length; col++) {
 				switch (elements[0][col]) {
 				case "User":
