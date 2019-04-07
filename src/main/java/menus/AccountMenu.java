@@ -57,7 +57,20 @@ public class AccountMenu extends Menu {
 	private String create() {
 		// get data from user
 		String accountNumber = CONSOLE.printForResponse("Please enter your: \n -> account number : ");
+		
+		if (accountNumber.length() != 24) {
+			return "Account number has wrong length.";
+		}
+
+		if (!accountNumber.startsWith("RO")) {
+			return "Account number should start with RO.";
+		}
+		
 		String accountType = CONSOLE.printForResponse(" -> account type : ");
+		
+		if (!AccountType.isType(accountType)) {
+			return "Account type not supported.";
+		}
 
 		BigDecimal balance;
 		switch (CONSOLE.printForResponse("Type y if you want to add a sum right away : ")) {
@@ -71,18 +84,6 @@ public class AccountMenu extends Menu {
 		default:
 			balance = new BigDecimal(0);
 			break;
-		}
-
-		if (accountNumber.length() != 24) {
-			return "Account number has wrong length.";
-		}
-
-		if (!accountNumber.startsWith("RO")) {
-			return "Account number should start with RO.";
-		}
-
-		if (!AccountType.isType(accountType)) {
-			return "Account type not supported.";
 		}
 
 		user.createAccount(accountNumber, balance, AccountType.valueOf(accountType));
