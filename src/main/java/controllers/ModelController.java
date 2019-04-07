@@ -13,7 +13,7 @@ public class ModelController implements Controller {
 	private static final Logger LOGGER = LogManager.getLogger(ModelController.class);
 
 	/**
-	 * Get user and its accounts
+	 * Get user and his accounts
 	 * 
 	 * @param username
 	 * @param password

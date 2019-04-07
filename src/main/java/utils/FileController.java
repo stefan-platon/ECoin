@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 public class FileController {
 
-	private static final Logger logger = LogManager.getLogger(FileController.class);
+	private static final Logger LOGGER = LogManager.getLogger(FileController.class);
 
 	public List<String[]> read(String path, String delimiter) {
 		// parse file content
@@ -26,9 +26,8 @@ public class FileController {
 				response.add(line.split(delimiter, -1));
 			}
 		} catch (Exception e) {
-			logger.error("file not found : " + path);
-			System.out.println("Database file not found. Please contact support.");
-			System.exit(-1);
+			LOGGER.error("file not found : " + path);
+			System.out.println("Database file not found. Please contact support or try again later.");
 		}
 
 		return response;
@@ -48,9 +47,8 @@ public class FileController {
 				response.add(line.split(delimiter, -1));
 			}
 		} catch (Exception e) {
-			logger.error("file not found : " + path);
-			System.out.println("Resource file not found. Please contact support.");
-			System.exit(-1);
+			LOGGER.error("file not found : " + path);
+			System.out.println("Resource file not found. Please contact support or try again later.");
 		}
 
 		return response;
@@ -60,9 +58,9 @@ public class FileController {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
 			bw.write(object.toString());
 		} catch (Exception e) {
-			logger.error("could not insert " + object.getClass() + " : " + path + " : " + e.getMessage());
-			System.out.println("There was a problem while saving the data.");
-			System.out.println("If the problem persists, please contact support.");
+			LOGGER.error("could not insert " + object.getClass() + " : " + path + " : " + e.getMessage());
+			System.out.println(
+					"There was a problem while saving the data. If the problem persists, please contact support.");
 		}
 	}
 

@@ -1,15 +1,10 @@
 package models;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 import collections.AccountType;
-import utils.Utils;
 
 public class Account {
-
-	// static collection to store possible account types
-	static Set<String> accountTypeSet = Utils.newHashSet("EUR", "RON");
 
 	protected String accountNumber;
 
