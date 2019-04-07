@@ -65,7 +65,7 @@ public class UserController extends User implements Controller {
 		List<AccountController> response = new ArrayList<>();
 
 		for (AccountController account : accounts) {
-			if (account.getAccountType().getType().equals(accountType)) {
+			if (account.getAccountType().equals(accountType)) {
 				response.add(account);
 			}
 		}
@@ -84,7 +84,7 @@ public class UserController extends User implements Controller {
 		List<AccountController> response = new ArrayList<>();
 
 		for (AccountController account : accounts) {
-			if (account.getAccountType().getType().equals(accountType)
+			if (account.getAccountType().equals(accountType)
 					&& !account.getAccountNumber().equals(accountNumber)) {
 				response.add(account);
 			}

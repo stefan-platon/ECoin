@@ -29,7 +29,7 @@ public class Utils {
 					elements[line][col] = account.getBalance().toString();
 					break;
 				case "Type":
-					elements[line][col] = account.getAccountType().getType();
+					elements[line][col] = account.getAccountType();
 					break;
 				}
 			}

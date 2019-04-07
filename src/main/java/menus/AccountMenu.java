@@ -101,7 +101,7 @@ public class AccountMenu extends Menu {
 		AccountController accountFrom = user.getAccountByAccountNumber(accountNumber);
 
 		if (accountFrom != null) {
-			String accountType = accountFrom.getAccountType().getType();
+			String accountType = accountFrom.getAccountType();
 
 			// list all compatible accounts
 			List<AccountController> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);

@@ -38,8 +38,8 @@ public class Account {
 		this.balance = balance;
 	}
 
-	public AccountType getAccountType() {
-		return accountType;
+	public String getAccountType() {
+		return accountType.getType();
 	}
 
 	public void setAccountType(AccountType accountType) {
