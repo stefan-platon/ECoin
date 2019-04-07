@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import exceptions.DataValidationException;
+import collections.AccountType;
 import models.User;
 
 public class UserController extends User implements Controller {
@@ -27,7 +27,7 @@ public class UserController extends User implements Controller {
 		return instance;
 	}
 
-	public void addAccount(String accountNumber, BigDecimal balance, String accountType) {
+	public void addAccount(String accountNumber, BigDecimal balance, AccountType accountType) {
 		accounts.add(new AccountController(accountNumber, this.username, balance, accountType));
 	}
 
@@ -40,15 +40,14 @@ public class UserController extends User implements Controller {
 	 * @param accountType
 	 * @throws DataValidationException
 	 */
-	public void createAccount(String accountNumber, BigDecimal balance, String accountType)
-			throws DataValidationException {
+	public void createAccount(String accountNumber, BigDecimal balance, AccountType accountType) {
 		AccountController account = new AccountController();
 		account.setAccountNumber(accountNumber);
 		account.setUsername(this.username);
 		account.setBalance(balance);
 		account.setAccountType(accountType);
 
-		fileController.write(ACCOUNTS_FILE_PATH, account);
+		FILE_CONTROLLER.write(ACCOUNTS_FILE_PATH, account);
 
 		accounts.add(account);
 	}
@@ -62,11 +61,11 @@ public class UserController extends User implements Controller {
 		return null;
 	}
 
-	public List<AccountController> getAccountsByType(String accountType) {
+	public List<AccountController> getAccountsByType(AccountType accountType) {
 		List<AccountController> response = new ArrayList<>();
 
 		for (AccountController account : accounts) {
-			if (account.getAccountType().equals(accountType)) {
+			if (account.getAccountType().getType().equals(accountType)) {
 				response.add(account);
 			}
 		}
@@ -85,7 +84,8 @@ public class UserController extends User implements Controller {
 		List<AccountController> response = new ArrayList<>();
 
 		for (AccountController account : accounts) {
-			if (account.getAccountType().equals(accountType) && !account.getAccountNumber().equals(accountNumber)) {
+			if (account.getAccountType().getType().equals(accountType)
+					&& !account.getAccountNumber().equals(accountNumber)) {
 				response.add(account);
 			}
 		}

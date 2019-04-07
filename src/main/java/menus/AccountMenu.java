@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import collections.AccountType;
 import controllers.AccountController;
-import exceptions.DataValidationException;
 import utils.Utils;
 
 /**
@@ -33,8 +33,7 @@ public class AccountMenu extends Menu {
 				CONSOLE.print(create());
 				break;
 			case "list":
-				CONSOLE.printTable(
-						Utils.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+				CONSOLE.printTable(Utils.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
 				break;
 			case "transfer":
 				CONSOLE.print(transfer());
@@ -73,7 +72,7 @@ public class AccountMenu extends Menu {
 			balance = new BigDecimal(0);
 			break;
 		}
-		
+
 		if (accountNumber.length() != 24) {
 			return "Account number has wrong length.";
 		}
@@ -81,14 +80,14 @@ public class AccountMenu extends Menu {
 		if (!accountNumber.startsWith("RO")) {
 			return "Account number should start with RO.";
 		}
-		
-		if (!accountTypeSet.contains(accountType)) {
-			throw new DataValidationException("Account type not supported");
+
+		if (!AccountType.isType(accountType)) {
+			return "Account type not supported.";
 		}
 
-		user.createAccount(accountNumber, balance, accountType);
-		LOGGER.info("new account : " + user.user.getUsername());
-		
+		user.createAccount(accountNumber, balance, AccountType.valueOf(accountType));
+		LOGGER.info("new account : " + user.getUsername());
+
 		return "Account created succesfully!";
 	}
 
@@ -101,11 +100,10 @@ public class AccountMenu extends Menu {
 		AccountController accountFrom = user.getAccountByAccountNumber(accountNumber);
 
 		if (accountFrom != null) {
-			String accountType = accountFrom.getAccountType();
+			String accountType = accountFrom.getAccountType().getType();
 
 			// list all compatible accounts
-			List<AccountController> destinationAccounts = user.getAccountsByTypeExcept(accountType,
-					accountNumber);
+			List<AccountController> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
 			CONSOLE.printTable(Utils.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
 
 			// get destination account

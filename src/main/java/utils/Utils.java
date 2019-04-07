@@ -32,7 +32,7 @@ public class Utils {
 					elements[line][col] = account.getBalance().toString();
 					break;
 				case "Type":
-					elements[line][col] = account.getAccountType();
+					elements[line][col] = account.getAccountType().getType();
 					break;
 				}
 			}
@@ -40,19 +40,6 @@ public class Utils {
 		}
 
 		return elements;
-	}
-
-	/**
-	 * Method to populate a hash set with given elements
-	 * 
-	 * @param objs
-	 * @return
-	 */
-	@SafeVarargs
-	public static final <T> Set<T> newHashSet(T... objs) {
-		Set<T> set = new HashSet<T>();
-		Collections.addAll(set, objs);
-		return set;
 	}
 
 }

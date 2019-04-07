@@ -3,7 +3,7 @@ package models;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import exceptions.DataValidationException;
+import collections.AccountType;
 import utils.Utils;
 
 public class Account {
@@ -17,21 +17,13 @@ public class Account {
 
 	protected BigDecimal balance;
 
-	protected String accountType;
+	protected AccountType accountType;
 
 	public String getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(String accountNumber) throws DataValidationException {
-		if (accountNumber.length() != 24) {
-			throw new DataValidationException("Account number has wrong length.");
-		}
-
-		if (!accountNumber.startsWith("RO")) {
-			throw new DataValidationException("Account number should start with RO.");
-		}
-
+	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
@@ -51,21 +43,16 @@ public class Account {
 		this.balance = balance;
 	}
 
-	public String getAccountType() {
+	public AccountType getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(String accountType) throws DataValidationException {
-		if (!accountTypeSet.contains(accountType)) {
-			throw new DataValidationException("Account type not supported");
-		}
-
+	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
-
-	}
-
-
+	
+	protected Account() {
+		
 	}
 
 }

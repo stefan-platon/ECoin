@@ -2,6 +2,7 @@ package controllers;
 
 import java.math.BigDecimal;
 
+import collections.AccountType;
 import models.Account;
 
 public class AccountController extends Account {
@@ -10,7 +11,7 @@ public class AccountController extends Account {
 
 	}
 
-	AccountController(String accountNumber, String username, BigDecimal balance, String accountType) {
+	AccountController(String accountNumber, String username, BigDecimal balance, AccountType accountType) {
 		this.accountNumber = accountNumber;
 		this.username = username;
 		this.balance = balance;

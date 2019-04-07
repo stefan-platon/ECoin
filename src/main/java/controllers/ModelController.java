@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import collections.AccountType;
+
 public class ModelController implements Controller {
 
 	private static final Logger LOGGER = LogManager.getLogger(ModelController.class);
@@ -44,7 +46,7 @@ public class ModelController implements Controller {
 			try {
 				for (String[] line : fileContent) {
 					if (username.equals(line[1])) {
-						user.addAccount(line[0], new BigDecimal(line[2]), line[3]);
+						user.addAccount(line[0], new BigDecimal(line[2]), AccountType.valueOf(line[3]));
 					}
 				}
 			} catch (IndexOutOfBoundsException e) {
