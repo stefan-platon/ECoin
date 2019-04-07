@@ -12,7 +12,7 @@ abstract class Menu {
 
 	protected static UserController user = null;
 
-	protected static ConsoleController console = new ConsoleController();
+	protected static final ConsoleController CONSOLE = new ConsoleController();
 
 	/**
 	 * Function responsible for interacting with the user and executing commands.
@@ -33,12 +33,12 @@ abstract class Menu {
 			});
 			title = builder.toString();
 
-			console.print(title);
+			CONSOLE.print(title);
 		} else {
-			console.print(title);
+			CONSOLE.print(title);
 		}
 
-		console.print("Type 'man' if you want to see available commands!");
+		CONSOLE.print("Type 'man' if you want to see available commands!");
 	}
 
 }

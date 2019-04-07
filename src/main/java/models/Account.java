@@ -63,11 +63,8 @@ public class Account {
 		this.accountType = accountType;
 	}
 
-	protected Account() {
-
 	}
 
-	protected Account(String accountNumber, String username, BigDecimal balance, String accountType) {
 
 	}
 
