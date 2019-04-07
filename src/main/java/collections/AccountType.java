@@ -2,25 +2,19 @@ package collections;
 
 public enum AccountType {
 
-	RON("RON"), EUR("EUR");
-
-	private String type;
+	RON, EUR;
 
 	public String getType() {
-		return this.type;
+		return this.toString();
 	}
 
 	public static boolean isType(String type) {
 		for (AccountType accountType : AccountType.values()) {
-			if (type.equals(accountType.name())) {
+			if (type.equals(accountType.toString())) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	private AccountType(String type) {
-		this.type = type;
 	}
 
 }
