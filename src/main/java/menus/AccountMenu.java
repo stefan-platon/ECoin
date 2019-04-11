@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import collections.AccountType;
 import controllers.AccountController;
+import models.Account;
 import utils.Utils;
 
 /**
@@ -42,8 +43,9 @@ public class AccountMenu extends Menu {
 				sesssion = false;
 				break;
 			case "man":
-				CONSOLE.printMultiple("-> create : create new account \n", "-> list   : list available accounts \n",
-						"-> back   : go back to main menu \n");
+				CONSOLE.printMultiple("-> create  : create new account \n", "-> list    : list available accounts \n",
+						"-> transfer: transfer money to another account of the same type",
+						"-> back    : go back to main menu \n");
 				break;
 			case "title":
 				printTitle(TILE_FILE_PATH);
@@ -57,7 +59,7 @@ public class AccountMenu extends Menu {
 	private String create() {
 		// get data from user
 		String accountNumber = CONSOLE.printForResponse("Please enter your: \n -> account number : ");
-		
+
 		if (accountNumber.length() != 24) {
 			return "Account number has wrong length.";
 		}
@@ -65,9 +67,9 @@ public class AccountMenu extends Menu {
 		if (!accountNumber.startsWith("RO")) {
 			return "Account number should start with RO.";
 		}
-		
+
 		String accountType = CONSOLE.printForResponse(" -> account type : ");
-		
+
 		if (!AccountType.isType(accountType)) {
 			return "Account type not supported.";
 		}
@@ -98,19 +100,19 @@ public class AccountMenu extends Menu {
 
 		// get source account
 		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
-		AccountController accountFrom = user.getAccountByAccountNumber(accountNumber);
+		Account accountFrom = user.getAccountByAccountNumber(accountNumber);
 
 		if (accountFrom != null) {
 			String accountType = accountFrom.getAccountType();
 
 			// list all compatible accounts
-			List<AccountController> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
+			List<Account> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
 			CONSOLE.printTable(Utils.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
 
 			// get destination account
 			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
-			AccountController accountTo = null;
-			for (AccountController account : destinationAccounts) {
+			Account accountTo = null;
+			for (Account account : destinationAccounts) {
 				if (accountNumber.equals(account.getAccountNumber())) {
 					accountTo = account;
 					break;
@@ -122,7 +124,7 @@ public class AccountMenu extends Menu {
 					BigDecimal amount = new BigDecimal(
 							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
 					// execute the transfer
-					return accountFrom.transfer(accountTo, amount);
+					return AccountController.transfer(accountFrom, accountTo, amount);
 				} catch (NumberFormatException e) {
 					return "Invalid sum!";
 				}

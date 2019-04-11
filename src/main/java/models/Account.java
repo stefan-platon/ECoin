@@ -3,6 +3,7 @@ package models;
 import java.math.BigDecimal;
 
 import collections.AccountType;
+import exceptions.AccountDataValidationException;
 
 public class Account {
 
@@ -19,6 +20,14 @@ public class Account {
 	}
 
 	public void setAccountNumber(String accountNumber) {
+		if (accountNumber.length() != 24) {
+			throw new AccountDataValidationException("Account number has wrong length.");
+		}
+
+		if (!accountNumber.startsWith("RO")) {
+			throw new AccountDataValidationException("Account number should start with RO.");
+		}
+
 		this.accountNumber = accountNumber;
 	}
 
@@ -45,9 +54,23 @@ public class Account {
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
-	
-	protected Account() {
-		
+
+	public void setAccountType(String accountType) {
+		if (!AccountType.isType(accountType)) {
+			throw new AccountDataValidationException("Account type not supported.");
+		}
+
+		this.accountType = AccountType.valueOf(accountType);
+	}
+
+	public Account() {
+
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder(this.accountNumber).append(" ").append(this.username).append(" ").append(this.balance)
+				.append(" ").append(this.accountType).append("\n").toString();
 	}
 
 }

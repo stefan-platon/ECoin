@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import controllers.ModelController;
+import exceptions.UserNotFoundException;
 
 /**
  * Class responsible the user login menu.
@@ -61,12 +62,13 @@ public class LoginMenu extends Menu {
 			String password = CONSOLE.printForResponse(" -> password : ");
 
 			// get user based on credentials
-			user = ModelController.getUser(username, password);
-			if (user != null) {
+			try {
+				user = ModelController.getUser(username, password);
+
 				LOGGER.info("user logged in : " + user.getUsername());
 				return "Welcome " + user.getUsername() + "!";
-			} else {
-				return "Wrong credentials! Try again.";
+			} catch (UserNotFoundException e) {
+				return e.getMessage();
 			}
 		} else {
 			return "You must first log out!";

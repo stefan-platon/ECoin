@@ -2,35 +2,17 @@ package controllers;
 
 import java.math.BigDecimal;
 
-import collections.AccountType;
 import models.Account;
 
-public class AccountController extends Account {
+public class AccountController implements Controller {
 
-	AccountController() {
-
-	}
-
-	AccountController(String accountNumber, String username, BigDecimal balance, AccountType accountType) {
-		this.accountNumber = accountNumber;
-		this.username = username;
-		this.balance = balance;
-		this.accountType = accountType;
-	}
-
-	@Override
-	public String toString() {
-		return new StringBuilder(this.accountNumber).append(" ").append(this.username).append(" ").append(this.balance)
-				.append(" ").append(this.accountType).append("\n").toString();
-	}
-
-	public String transfer(AccountController accountTo, BigDecimal amount) {
-		if (this.getBalance().compareTo(amount) == -1) {
+	public static String transfer(Account accountFrom, Account accountTo, BigDecimal amount) {
+		if (accountFrom.getBalance().compareTo(amount) == -1) {
 			return "Entered sum is too big for this account!";
 		}
 
-		balance = balance.subtract(amount);
-		accountTo.balance = accountTo.balance.add(amount);
+		accountFrom.setBalance(accountFrom.getBalance().subtract(amount));
+		accountTo.setBalance(accountTo.getBalance().add(amount));
 
 		return "Transfer successful!";
 	}

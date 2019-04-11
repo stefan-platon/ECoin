@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import collections.AccountType;
+import exceptions.UserNotFoundException;
 
 public class ModelController implements Controller {
 
@@ -28,7 +28,7 @@ public class ModelController implements Controller {
 		try {
 			for (String[] line : fileContent) {
 				if (username.equals(line[0]) && password.equals(line[1])) {
-					user = UserController.getInstance();
+					user = new UserController();
 					user.setUsername(username);
 					user.setPassword(password);
 					break;
@@ -36,24 +36,26 @@ public class ModelController implements Controller {
 			}
 		} catch (IndexOutOfBoundsException e) {
 			LOGGER.fatal("file not well formatted : " + USERS_FILE_PATH);
-			System.out.println("There was a problem reading the users from database.");
-			System.exit(-1);
+			System.out.println(
+					"There was a problem reading the users from database. Please contact support or try again later.");
 		}
 
-		if (user != null) {
-			// get user's accounts
-			fileContent = FILE_CONTROLLER.read(ACCOUNTS_FILE_PATH, " ");
-			try {
-				for (String[] line : fileContent) {
-					if (username.equals(line[1])) {
-						user.addAccount(line[0], new BigDecimal(line[2]), AccountType.valueOf(line[3]));
-					}
+		if (user == null) {
+			throw new UserNotFoundException("User not found with the given credentials!");
+		}
+
+		// get user's accounts
+		fileContent = FILE_CONTROLLER.read(ACCOUNTS_FILE_PATH, " ");
+		try {
+			for (String[] line : fileContent) {
+				if (username.equals(line[1])) {
+					user.addAccount(line[0], new BigDecimal(line[2]), line[3]);
 				}
-			} catch (IndexOutOfBoundsException e) {
-				LOGGER.fatal("accounts file not well formatted : " + ACCOUNTS_FILE_PATH);
-				System.out.println("There was a problem reading your accounts from database.");
-				System.exit(-1);
 			}
+		} catch (IndexOutOfBoundsException e) {
+			LOGGER.fatal("accounts file not well formatted : " + ACCOUNTS_FILE_PATH);
+			System.out.println(
+					"There was a problem reading your accounts from database. Please contact support or try again later.");
 		}
 
 		return user;

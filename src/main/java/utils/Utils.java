@@ -2,11 +2,11 @@ package utils;
 
 import java.util.List;
 
-import controllers.AccountController;
+import models.Account;
 
 public class Utils {
 
-	public static final String[][] createAccountsListTable(List<AccountController> accounts, String... columns) {
+	public static final String[][] createAccountsListTable(List<Account> accounts, String... columns) {
 		String[][] elements = new String[accounts.size() + 1][columns.length];
 
 		// set column headers
@@ -16,7 +16,7 @@ public class Utils {
 
 		// fill table with accounts data
 		int line = 1;
-		for (AccountController account : accounts) {
+		for (Account account : accounts) {
 			for (int col = 0; col < columns.length; col++) {
 				switch (elements[0][col]) {
 				case "User":
