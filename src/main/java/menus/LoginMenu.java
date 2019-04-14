@@ -33,7 +33,6 @@ public class LoginMenu extends Menu {
 				break;
 			case "account":
 				CONSOLE.print(account());
-				printTitle(TILE_FILE_PATH);
 				break;
 			case "exit":
 				sesssion = false;
@@ -77,8 +76,8 @@ public class LoginMenu extends Menu {
 
 	private String logout() {
 		if (user != null) {
-			user = null;
 			LOGGER.info("user logged out : " + user.getUsername());
+			user = null;
 			return "You have been successfully logged out. We hope you will be back soon!";
 		} else {
 			return "You must first be logged in!";
@@ -90,6 +89,7 @@ public class LoginMenu extends Menu {
 			// got to account menu
 			AccountMenu accountMenu = new AccountMenu();
 			accountMenu.show();
+			printTitle(TILE_FILE_PATH);
 			return "";
 		} else {
 			return "You must first be logged in!";
