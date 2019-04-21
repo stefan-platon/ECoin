@@ -54,11 +54,23 @@ public class FileController {
 		return response;
 	}
 
-	public void write(String path, Object object) {
+	public void writeObject(String path, Object object) {
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
 			bw.write(object.toString());
 		} catch (Exception e) {
-			LOGGER.error("could not insert " + object.getClass() + " : " + path + " : " + e.getMessage());
+			LOGGER.error("could not insert object " + object.getClass() + " : " + path + " : " + e.getMessage());
+			System.out.println(
+					"There was a problem while saving the data. If the problem persists, please contact support.");
+		}
+	}
+	
+	public void writeLines(String path, List<String> lines) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+			for (String line : lines) {
+				bw.write(line);
+			}
+		} catch (Exception e) {
+			LOGGER.error("could not update accounts : " + path + " : " + e.getMessage());
 			System.out.println(
 					"There was a problem while saving the data. If the problem persists, please contact support.");
 		}

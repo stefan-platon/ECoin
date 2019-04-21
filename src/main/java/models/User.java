@@ -48,5 +48,12 @@ public class User {
 
 		return instance;
 	}
+	
+	/**
+	 * Destroy instance of this class.
+	 */
+	public void destroyInstance() {
+		instance = null;
+	}
 
 }

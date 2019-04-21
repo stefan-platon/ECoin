@@ -76,7 +76,9 @@ public class LoginMenu extends Menu {
 
 	private String logout() {
 		if (user != null) {
+			user.saveAccountsToFile();
 			LOGGER.info("user logged out : " + user.getUsername());
+			user.destroyInstance();
 			user = null;
 			return "You have been successfully logged out. We hope you will be back soon!";
 		} else {
