@@ -35,6 +35,9 @@ public class LoginMenu extends Menu {
 				CONSOLE.print(account());
 				break;
 			case "exit":
+				if (user != null) {
+					user.saveAccountsToFile();
+				}
 				sesssion = false;
 				break;
 			case "man":
