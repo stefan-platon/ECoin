@@ -28,7 +28,7 @@ abstract class Menu {
 			List<String[]> fileContent = fileReader.readResource(path, "\n");
 
 			StringBuilder builder = new StringBuilder();
-			fileContent.forEach((line) -> {
+			fileContent.forEach(line -> {
 				builder.append(line[0] + "\n");
 			});
 			title = builder.toString();
