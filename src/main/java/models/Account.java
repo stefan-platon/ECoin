@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class Account {
 	@Column(name = "id")
 	private long id;
 
-	@ManyToOne()
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
 	@JoinColumn(name = "user_id")
 	private User user;
 
@@ -46,7 +47,8 @@ public class Account {
 	@Column(name = "updated_time")
 	private LocalDateTime updatedTime;
 
-	@OneToMany(mappedBy = "account")
+	@OneToMany(mappedBy = "account", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
 	private List<Transaction> transactions = new ArrayList<>();
 
 	/**
