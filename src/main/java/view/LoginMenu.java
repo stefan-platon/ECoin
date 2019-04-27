@@ -20,7 +20,7 @@ public class LoginMenu extends Menu {
 
 		// start the loop to accept commands
 		String command;
-		boolean sesssion = true;
+		boolean menuSession = true;
 		do {
 			command = CONSOLE.printForResponse("> ");
 
@@ -35,7 +35,7 @@ public class LoginMenu extends Menu {
 				CONSOLE.print(account());
 				break;
 			case "exit":
-				sesssion = false;
+				menuSession = false;
 				break;
 			case "man":
 				CONSOLE.printMultiple("-> login   : login into your account (only if you are not already logged in) \n",
@@ -49,7 +49,7 @@ public class LoginMenu extends Menu {
 			default:
 				CONSOLE.print("Unknown command! Type 'man' to see available commands.");
 			}
-		} while (sesssion);
+		} while (menuSession);
 
 		CONSOLE.close();
 	}

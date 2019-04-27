@@ -3,20 +3,21 @@ package view;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 
 import collections.AccountType;
 import model.Account;
 import repository.AccountRepository;
-import utils.Utils;
+import utils.AccountsListGenerator;
+import utils.CreateTable;
 
 /**
  * Class responsible the user account menu.
  */
 public class AccountMenu extends Menu {
-
-	private static final Logger LOGGER = LogManager.getLogger(AccountMenu.class);
 
 	private final String TILE_FILE_PATH = "files/account_menu_title.txt";
 
@@ -25,7 +26,7 @@ public class AccountMenu extends Menu {
 
 		// start the loop to accept commands
 		String command;
-		boolean sesssion = true;
+		boolean menuSession = true;
 		do {
 			command = CONSOLE.printForResponse("> ");
 
@@ -34,13 +35,13 @@ public class AccountMenu extends Menu {
 				CONSOLE.print(create());
 				break;
 			case "list":
-				CONSOLE.printTable(Utils.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+				list();
 				break;
 			case "transfer":
 				CONSOLE.print(transfer());
 				break;
 			case "back":
-				sesssion = false;
+				menuSession = false;
 				break;
 			case "man":
 				CONSOLE.printMultiple("-> create  : create new account \n", "-> list    : list available accounts \n",
@@ -53,19 +54,35 @@ public class AccountMenu extends Menu {
 			default:
 				CONSOLE.print("Unknown command! Type 'man' to see available commands.");
 			}
-		} while (sesssion);
+		} while (menuSession);
+	}
+
+	private void list() {
+		List<Account> accounts = new AccountsListGenerator().generateForUser(user);
+		CONSOLE.printTable(CreateTable.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 	}
 
 	private String create() {
 		// get data from user
-		String accountNumber = CONSOLE.printForResponse("Please enter your: \n -> account number : ");
+		String accountNumber;
+		switch (CONSOLE.printForResponse("Do you want to autogenerate an account number? (y/n) : ")) {
+		case "y":
+			StringBuilder sb = new StringBuilder();
+			sb.append("RO");
+			sb.append(RandomStringUtils.random(22, true, true));
+			accountNumber = sb.toString();
+			break;
+		default:
+			accountNumber = CONSOLE.printForResponse("-> account number : ");
 
-		if (accountNumber.length() != 24) {
-			return "Account number has wrong length.";
-		}
+			if (accountNumber.length() != 24) {
+				return "Account number has wrong length.";
+			}
 
-		if (!accountNumber.startsWith("RO")) {
-			return "Account number should start with RO.";
+			if (!accountNumber.startsWith("RO")) {
+				return "Account number should start with RO.";
+			}
+			break;
 		}
 
 		String accountType = CONSOLE.printForResponse(" -> account type : ");
@@ -75,7 +92,7 @@ public class AccountMenu extends Menu {
 		}
 
 		BigDecimal balance;
-		switch (CONSOLE.printForResponse("Type y if you want to add a sum right away : ")) {
+		switch (CONSOLE.printForResponse("Do you want to add a sum right away? (y/n) : ")) {
 		case "y":
 			try {
 				balance = new BigDecimal(CONSOLE.printForResponse(" -> sum : "));
@@ -88,15 +105,12 @@ public class AccountMenu extends Menu {
 			break;
 		}
 
-		user.createAccount(accountNumber, balance, AccountType.valueOf(accountType));
-		LOGGER.info("new account : " + user.getUsername());
-
-		return "Account created succesfully!";
+		return new AccountRepository().create(accountNumber, balance, accountType);
 	}
 
 	private String transfer() {
 		// list all of the user's accounts
-		CONSOLE.printTable(Utils.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+		CONSOLE.printTable(CreateTable.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
 
 		// get source account
 		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
@@ -107,7 +121,7 @@ public class AccountMenu extends Menu {
 
 			// list all compatible accounts
 			List<Account> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
-			CONSOLE.printTable(Utils.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
+			CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
 
 			// get destination account
 			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");

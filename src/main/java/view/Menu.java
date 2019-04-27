@@ -9,7 +9,7 @@ import utils.FileController;
 abstract class Menu {
 
 	protected String title = null;
-
+	
 	protected static User user = null;
 
 	protected static final ConsoleController CONSOLE = new ConsoleController();

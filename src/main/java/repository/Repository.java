@@ -1,17 +1,20 @@
 package repository;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 
 import database.SessionFactoryObject;
+import model.User;
 import utils.FileController;
 
-public interface Repository {
+abstract class Repository {
 
-	static final String USERS_FILE_PATH = System.getProperty("user.dir") + "/database/users.txt";
-	static final String ACCOUNTS_FILE_PATH = System.getProperty("user.dir") + "/database/accounts.txt";
+	protected static final String USERS_FILE_PATH = System.getProperty("user.dir") + "/database/users.txt";
+	protected static final String ACCOUNTS_FILE_PATH = System.getProperty("user.dir") + "/database/accounts.txt";
 
-	static final FileController FILE_CONTROLLER = new FileController();
+	protected static final FileController FILE_CONTROLLER = new FileController();
 
-	static final SessionFactory SESSION_FACTORY = SessionFactoryObject.getSessionFactory();
+	protected static final Session SESSION = SessionFactoryObject.getSession();
+
+	protected static User user = null;
 
 }

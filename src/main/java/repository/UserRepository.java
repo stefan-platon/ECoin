@@ -1,11 +1,9 @@
 package repository;
 
-import org.hibernate.Session;
-
 import exceptions.UserNotFoundException;
 import model.User;
 
-public class UserRepository implements Repository {
+public class UserRepository extends Repository {
 
 	/**
 	 * Get user and his accounts
@@ -15,13 +13,12 @@ public class UserRepository implements Repository {
 	 * @return User
 	 */
 	public User get(String username, String password) {
-		Session session = SESSION_FACTORY.getCurrentSession();
-		session.beginTransaction();
+		SESSION.beginTransaction();
 
 		String query = String.format("from User where username = '%s' and password = '%s'", username, password);
-		User user = (User) session.createQuery(query).getSingleResult();
+		user = (User) SESSION.createQuery(query).getSingleResult();
 
-		session.getTransaction().commit();
+		SESSION.getTransaction().commit();
 
 		if (user == null) {
 			throw new UserNotFoundException("User not found with the given credentials!");
