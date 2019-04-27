@@ -13,7 +13,7 @@ import model.User;
 public class SessionFactoryObject {
 
 	private static SessionFactory sessionFactory = null;
-	
+
 	private static Session session = null;
 
 	public static SessionFactory getSessionFactory() {
@@ -24,7 +24,7 @@ public class SessionFactoryObject {
 
 		return sessionFactory;
 	}
-	
+
 	public static Session getSession() {
 		if (session == null)
 			session = getSessionFactory().openSession();
@@ -32,7 +32,14 @@ public class SessionFactoryObject {
 		return session;
 	}
 
+	public static void closeSession() {
+		if (session != null)
+			session.close();
+	}
+
 	public static void closeSessionFactory() {
+		if (session != null)
+			session.close();
 		if (sessionFactory != null)
 			sessionFactory.close();
 	}

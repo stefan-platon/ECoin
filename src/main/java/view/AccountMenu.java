@@ -85,7 +85,7 @@ public class AccountMenu extends Menu {
 			break;
 		}
 
-		String accountType = CONSOLE.printForResponse(" -> account type : ");
+		String accountType = CONSOLE.printForResponse("-> account type : ");
 
 		if (!AccountType.isType(accountType)) {
 			return "Account type not supported.";
