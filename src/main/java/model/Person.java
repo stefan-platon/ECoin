@@ -20,7 +20,7 @@ public class Person {
 	private long id;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Column(name = "address", nullable = false)

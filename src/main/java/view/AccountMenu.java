@@ -4,14 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 
 import collections.AccountType;
 import model.Account;
 import repository.AccountRepository;
-import utils.AccountsListGenerator;
 import utils.CreateTable;
 
 /**
@@ -38,7 +34,7 @@ public class AccountMenu extends Menu {
 				list();
 				break;
 			case "transfer":
-				CONSOLE.print(transfer());
+//				CONSOLE.print(transfer());
 				break;
 			case "back":
 				menuSession = false;
@@ -58,7 +54,7 @@ public class AccountMenu extends Menu {
 	}
 
 	private void list() {
-		List<Account> accounts = new AccountsListGenerator().generateForUser(user);
+		List<Account> accounts = new AccountRepository().getForCurrentUser();
 		CONSOLE.printTable(CreateTable.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 	}
 
@@ -108,46 +104,46 @@ public class AccountMenu extends Menu {
 		return new AccountRepository().create(accountNumber, balance, accountType);
 	}
 
-	private String transfer() {
-		// list all of the user's accounts
-		CONSOLE.printTable(CreateTable.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
-
-		// get source account
-		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
-		Account accountFrom = user.getAccountByAccountNumber(accountNumber);
-
-		if (accountFrom != null) {
-			String accountType = accountFrom.getAccountType();
-
-			// list all compatible accounts
-			List<Account> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
-			CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
-
-			// get destination account
-			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
-			Account accountTo = null;
-			for (Account account : destinationAccounts) {
-				if (accountNumber.equals(account.getAccountNumber())) {
-					accountTo = account;
-					break;
-				}
-			}
-
-			if (accountTo != null) {
-				try {
-					BigDecimal amount = new BigDecimal(
-							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
-					// execute the transfer
-					return AccountRepository.transfer(accountFrom, accountTo, amount);
-				} catch (NumberFormatException e) {
-					return "Invalid sum!";
-				}
-			} else {
-				return "Invalid destination account!";
-			}
-		} else {
-			return "Invalid source account!";
-		}
-	}
+//	private String transfer() {
+//		// list all of the user's accounts
+//		CONSOLE.printTable(CreateTable.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+//
+//		// get source account
+//		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
+//		Account accountFrom = user.getAccountByAccountNumber(accountNumber);
+//
+//		if (accountFrom != null) {
+//			String accountType = accountFrom.getAccountType();
+//
+//			// list all compatible accounts
+//			List<Account> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
+//			CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
+//
+//			// get destination account
+//			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
+//			Account accountTo = null;
+//			for (Account account : destinationAccounts) {
+//				if (accountNumber.equals(account.getAccountNumber())) {
+//					accountTo = account;
+//					break;
+//				}
+//			}
+//
+//			if (accountTo != null) {
+//				try {
+//					BigDecimal amount = new BigDecimal(
+//							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
+//					// execute the transfer
+//					return AccountRepository.transfer(accountFrom, accountTo, amount);
+//				} catch (NumberFormatException e) {
+//					return "Invalid sum!";
+//				}
+//			} else {
+//				return "Invalid destination account!";
+//			}
+//		} else {
+//			return "Invalid source account!";
+//		}
+//	}
 
 }

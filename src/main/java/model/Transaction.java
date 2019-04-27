@@ -24,7 +24,7 @@ public class Transaction {
 	private long id;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "account_id")
+	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
 	@Column(name = "to_account", nullable = false)
@@ -127,5 +127,5 @@ public class Transaction {
 	private void initializeCreatedTime() {
 		this.createdTime = LocalDateTime.now();
 	}
-	
+
 }

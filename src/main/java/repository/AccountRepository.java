@@ -1,6 +1,7 @@
 package repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,8 +37,9 @@ public class AccountRepository extends Repository {
 		}
 
 		SESSION.beginTransaction();
-		
+
 		try {
+			user.getAccounts().add(account);
 			SESSION.save(account);
 			SESSION.getTransaction().commit();
 		} catch (ConstraintViolationException e) {
@@ -46,6 +48,16 @@ public class AccountRepository extends Repository {
 
 		LOGGER.info("new account : " + user.getUsername());
 		return "Account created succesfully!";
+	}
+
+	public List<Account> getForCurrentUser() {
+		SESSION.beginTransaction();
+
+		List<Account> accounts = user.getAccounts();
+
+		SESSION.getTransaction().commit();
+
+		return accounts;
 	}
 
 }
