@@ -1,7 +1,6 @@
-package models;
+package model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
@@ -36,11 +37,11 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
-	private List<Account> accounts = new ArrayList<>();
+	private List<Account> accounts;
 
 	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
-	private List<Notification> notifications = new ArrayList<>();
+	private List<Notification> notifications;
 
 	/**
 	 * @return the id
@@ -138,6 +139,16 @@ public class User {
 	 */
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
+	}
+
+	@PrePersist
+	private void initializeCreatedTime() {
+		this.createdTime = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	private void initializeUpdatedTime() {
+		this.updatedTime = LocalDateTime.now();
 	}
 
 }

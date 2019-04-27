@@ -1,10 +1,10 @@
-package menus;
+package view;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import controllers.ModelController;
 import exceptions.UserNotFoundException;
+import repository.UserRepository;
 
 /**
  * Class responsible the user login menu.
@@ -35,9 +35,6 @@ public class LoginMenu extends Menu {
 				CONSOLE.print(account());
 				break;
 			case "exit":
-				if (user != null) {
-					user.saveAccountsToFile();
-				}
 				sesssion = false;
 				break;
 			case "man":
@@ -65,7 +62,7 @@ public class LoginMenu extends Menu {
 
 			// get user based on credentials
 			try {
-				user = ModelController.getUser(username, password);
+				user = new UserRepository().get(username, password);
 
 				LOGGER.info("user logged in : " + user.getUsername());
 				return "Welcome " + user.getUsername() + "!";
@@ -79,9 +76,7 @@ public class LoginMenu extends Menu {
 
 	private String logout() {
 		if (user != null) {
-			user.saveAccountsToFile();
 			LOGGER.info("user logged out : " + user.getUsername());
-			user.destroyInstance();
 			user = null;
 			return "You have been successfully logged out. We hope you will be back soon!";
 		} else {

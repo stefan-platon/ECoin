@@ -2,7 +2,7 @@ package utils;
 
 import java.util.List;
 
-import models.Account;
+import model.Account;
 
 public class Utils {
 

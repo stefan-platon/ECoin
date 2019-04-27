@@ -1,4 +1,4 @@
-package menus;
+package view;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import collections.AccountType;
-import controllers.AccountController;
-import models.Account;
+import model.Account;
+import repository.AccountRepository;
 import utils.Utils;
 
 /**
@@ -124,7 +124,7 @@ public class AccountMenu extends Menu {
 					BigDecimal amount = new BigDecimal(
 							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
 					// execute the transfer
-					return AccountController.transfer(accountFrom, accountTo, amount);
+					return AccountRepository.transfer(accountFrom, accountTo, amount);
 				} catch (NumberFormatException e) {
 					return "Invalid sum!";
 				}

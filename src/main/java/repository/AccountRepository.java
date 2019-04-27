@@ -1,10 +1,10 @@
-package controllers;
+package repository;
 
 import java.math.BigDecimal;
 
-import models.Account;
+import model.Account;
 
-public class AccountController implements Controller {
+public class AccountRepository implements Repository {
 
 	public static String transfer(Account accountFrom, Account accountTo, BigDecimal amount) {
 		if (accountFrom.getBalance().compareTo(amount) == -1) {

@@ -1,8 +1,7 @@
-package models;
+package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import collections.AccountType;
@@ -49,7 +50,7 @@ public class Account {
 
 	@OneToMany(mappedBy = "account", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
-	private List<Transaction> transactions = new ArrayList<>();
+	private List<Transaction> transactions;
 
 	/**
 	 * @return the id
@@ -173,6 +174,16 @@ public class Account {
 	 */
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	@PrePersist
+	private void initializeCreatedTime() {
+		this.createdTime = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	private void initializeUpdatedTime() {
+		this.updatedTime = LocalDateTime.now();
 	}
 
 }

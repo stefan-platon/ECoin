@@ -1,8 +1,8 @@
-package menus;
+package view;
 
 import java.util.List;
 
-import controllers.UserController;
+import model.User;
 import utils.ConsoleController;
 import utils.FileController;
 
@@ -10,7 +10,7 @@ abstract class Menu {
 
 	protected String title = null;
 
-	protected static UserController user = null;
+	protected static User user = null;
 
 	protected static final ConsoleController CONSOLE = new ConsoleController();
 
