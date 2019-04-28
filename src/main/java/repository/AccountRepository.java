@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 
+import exceptions.AccountDataValidationException;
 import model.Account;
 
 public class AccountRepository extends Repository {
@@ -32,7 +33,7 @@ public class AccountRepository extends Repository {
 			account.setBalance(balance);
 			account.setAccountType(accountType);
 			account.setUser(user);
-		} catch (Exception e) {
+		} catch (AccountDataValidationException e) {
 			return e.getMessage();
 		}
 
