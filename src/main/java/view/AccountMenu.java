@@ -112,7 +112,13 @@ public class AccountMenu extends Menu {
 
 		// get source account
 		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
-		Account accountFrom = ACCOUNT_REPOSITORY.getForCurrentUserByNumber(accountNumber);
+		Account accountFrom = null;
+		for (Account account : user.getAccounts()) {
+			if (accountNumber.equals(account.getAccountNumber())) {
+				accountFrom = account;
+				break;
+			}
+		}
 		if (accountFrom == null) {
 			return "Invalid source account!";
 		}
