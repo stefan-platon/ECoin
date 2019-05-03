@@ -17,6 +17,8 @@ public class AccountMenu extends Menu {
 
 	private final String TILE_FILE_PATH = "files/account_menu_title.txt";
 
+	private final AccountRepository ACCOUNT_REPOSITORY = new AccountRepository();
+
 	public void show() {
 		printTitle(TILE_FILE_PATH);
 
@@ -34,7 +36,7 @@ public class AccountMenu extends Menu {
 				list();
 				break;
 			case "transfer":
-//				CONSOLE.print(transfer());
+				CONSOLE.print(transfer());
 				break;
 			case "back":
 				menuSession = false;
@@ -104,46 +106,47 @@ public class AccountMenu extends Menu {
 		return new AccountRepository().create(accountNumber, balance, accountType);
 	}
 
-//	private String transfer() {
-//		// list all of the user's accounts
-//		CONSOLE.printTable(CreateTable.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
-//
-//		// get source account
-//		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
-//		Account accountFrom = user.getAccountByAccountNumber(accountNumber);
-//
-//		if (accountFrom != null) {
-//			String accountType = accountFrom.getAccountType();
-//
-//			// list all compatible accounts
-//			List<Account> destinationAccounts = user.getAccountsByTypeExcept(accountType, accountNumber);
-//			CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
-//
-//			// get destination account
-//			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
-//			Account accountTo = null;
-//			for (Account account : destinationAccounts) {
-//				if (accountNumber.equals(account.getAccountNumber())) {
-//					accountTo = account;
-//					break;
-//				}
-//			}
-//
-//			if (accountTo != null) {
-//				try {
-//					BigDecimal amount = new BigDecimal(
-//							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
-//					// execute the transfer
-//					return AccountRepository.transfer(accountFrom, accountTo, amount);
-//				} catch (NumberFormatException e) {
-//					return "Invalid sum!";
-//				}
-//			} else {
-//				return "Invalid destination account!";
-//			}
-//		} else {
-//			return "Invalid source account!";
-//		}
-//	}
+	private String transfer() {
+		// list all of the user's accounts
+		CONSOLE.printTable(CreateTable.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+
+		// get source account
+		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
+		Account accountFrom = ACCOUNT_REPOSITORY.getForCurrentUserByNumber(accountNumber);
+
+		if (accountFrom != null) {
+			String accountType = accountFrom.getAccountType();
+
+			// list all compatible accounts
+			List<Account> destinationAccounts = ACCOUNT_REPOSITORY.getForCurrentUserByTypeExcept(accountType,
+					accountNumber);
+			CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
+
+			// get destination account
+			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
+			Account accountTo = null;
+			for (Account account : destinationAccounts) {
+				if (accountNumber.equals(account.getAccountNumber())) {
+					accountTo = account;
+					break;
+				}
+			}
+
+			if (accountTo != null) {
+				try {
+					BigDecimal amount = new BigDecimal(
+							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
+					// execute the transfer
+					return ACCOUNT_REPOSITORY.transfer(accountFrom, accountTo, amount);
+				} catch (NumberFormatException e) {
+					return "Invalid sum!";
+				}
+			} else {
+				return "Invalid destination account!";
+			}
+		} else {
+			return "Invalid source account!";
+		}
+	}
 
 }
