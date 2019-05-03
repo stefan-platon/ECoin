@@ -113,39 +113,41 @@ public class AccountMenu extends Menu {
 		// get source account
 		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
 		Account accountFrom = ACCOUNT_REPOSITORY.getForCurrentUserByNumber(accountNumber);
-
-		if (accountFrom != null) {
-			String accountType = accountFrom.getAccountType();
-
-			// list all compatible accounts
-			List<Account> destinationAccounts = ACCOUNT_REPOSITORY.getForCurrentUserByTypeExcept(accountType,
-					accountNumber);
-			CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
-
-			// get destination account
-			accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
-			Account accountTo = null;
-			for (Account account : destinationAccounts) {
-				if (accountNumber.equals(account.getAccountNumber())) {
-					accountTo = account;
-					break;
-				}
-			}
-
-			if (accountTo != null) {
-				try {
-					BigDecimal amount = new BigDecimal(
-							CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
-					// execute the transfer
-					return ACCOUNT_REPOSITORY.transfer(accountFrom, accountTo, amount);
-				} catch (NumberFormatException e) {
-					return "Invalid sum!";
-				}
-			} else {
-				return "Invalid destination account!";
-			}
-		} else {
+		if (accountFrom == null) {
 			return "Invalid source account!";
+		}
+
+		String accountType = accountFrom.getAccountType();
+
+		// list all compatible accounts
+		List<Account> destinationAccounts = ACCOUNT_REPOSITORY.getForCurrentUserByTypeExcept(accountType,
+				accountNumber);
+		if (destinationAccounts.isEmpty()) {
+			return "No valid destination accounts!";
+		}
+
+		CONSOLE.printTable(CreateTable.createAccountsListTable(destinationAccounts, "Number", "Balance", "Type"));
+
+		// get destination account
+		accountNumber = CONSOLE.printForResponse("Select destination account: \n -> account : ");
+		Account accountTo = null;
+		for (Account account : destinationAccounts) {
+			if (accountNumber.equals(account.getAccountNumber())) {
+				accountTo = account;
+				break;
+			}
+		}
+		if (accountTo == null) {
+			return "Invalid destination account!";
+		}
+
+		try {
+			BigDecimal amount = new BigDecimal(
+					CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
+			// execute the transfer
+			return ACCOUNT_REPOSITORY.transfer(accountFrom, accountTo, amount);
+		} catch (NumberFormatException e) {
+			return "Invalid sum!";
 		}
 	}
 

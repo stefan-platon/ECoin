@@ -90,17 +90,12 @@ public class AccountRepository extends Repository {
 	public List<Account> getForCurrentUserByTypeExcept(String accountType, String accountNumber) {
 		SESSION.beginTransaction();
 
-		List<Account> accounts;
-		try {
-			accounts = SESSION.createQuery(
-					"from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
-					.setParameter("user_id", user.getId()).setParameter("account_type", accountType)
-					.setParameter("account_number", accountNumber).list();
-		} catch (NoResultException e) {
-			accounts = null;
-		} finally {
-			SESSION.getTransaction().commit();
-		}
+		List<Account> accounts = SESSION.createQuery(
+				"from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
+				.setParameter("user_id", user.getId()).setParameter("account_type", accountType)
+				.setParameter("account_number", accountNumber).list();
+
+		SESSION.getTransaction().commit();
 
 		return accounts;
 	}
