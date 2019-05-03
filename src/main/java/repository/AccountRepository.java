@@ -48,8 +48,7 @@ public class AccountRepository extends Repository {
 		SESSION.beginTransaction();
 
 		try {
-			user.getAccounts().add(account);
-			SESSION.persist(user);
+			SESSION.persist(account);
 			SESSION.getTransaction().commit();
 		} catch (ConstraintViolationException e) {
 			return "Account number already exists!";
