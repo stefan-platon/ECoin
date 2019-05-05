@@ -25,8 +25,8 @@ public class AccountRepository extends Repository {
 
 		accountFrom.setBalance(accountFrom.getBalance().subtract(amount));
 		accountTo.setBalance(accountTo.getBalance().add(amount));
-		SESSION.persist(accountFrom);
-		SESSION.persist(accountTo);
+		SESSION.save(accountFrom);
+		SESSION.save(accountTo);
 
 		SESSION.getTransaction().commit();
 
@@ -48,7 +48,7 @@ public class AccountRepository extends Repository {
 		SESSION.beginTransaction();
 
 		try {
-			SESSION.persist(account);
+			SESSION.save(account);
 			SESSION.getTransaction().commit();
 		} catch (ConstraintViolationException e) {
 			return "Account number already exists!";
