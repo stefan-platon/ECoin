@@ -16,7 +16,10 @@ public class AccountRepository extends Repository {
 
 	private static final Logger LOGGER = LogManager.getLogger(AccountRepository.class);
 
-	public String transfer(Account accountFrom, Account accountTo, BigDecimal amount) {
+	public String transfer(long accountFromId, long accountToId, BigDecimal amount) {
+		Account accountFrom = SESSION.get(Account.class, accountFromId);
+		Account accountTo = SESSION.get(Account.class, accountToId);
+
 		if (accountFrom.getBalance().compareTo(amount) == -1) {
 			return "Entered sum is too big for this account!";
 		}

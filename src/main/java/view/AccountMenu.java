@@ -56,7 +56,7 @@ public class AccountMenu extends Menu {
 	}
 
 	private void list() {
-		List<Account> accounts = new AccountRepository().getForCurrentUser();
+		List<Account> accounts = ACCOUNT_REPOSITORY.getForCurrentUser();
 		CONSOLE.printTable(CreateTable.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 	}
 
@@ -103,7 +103,7 @@ public class AccountMenu extends Menu {
 			break;
 		}
 
-		return new AccountRepository().create(accountNumber, balance, accountType);
+		return ACCOUNT_REPOSITORY.create(accountNumber, balance, accountType);
 	}
 
 	private String transfer() {
@@ -151,7 +151,7 @@ public class AccountMenu extends Menu {
 			BigDecimal amount = new BigDecimal(
 					CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
 			// execute the transfer
-			return ACCOUNT_REPOSITORY.transfer(accountFrom, accountTo, amount);
+			return ACCOUNT_REPOSITORY.transfer(accountFrom.getId(), accountTo.getId(), amount);
 		} catch (NumberFormatException e) {
 			return "Invalid sum!";
 		}
