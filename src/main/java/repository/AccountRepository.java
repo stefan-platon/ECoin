@@ -5,16 +5,12 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 
-import exceptions.AccountDataValidationException;
 import model.Account;
+import model.User;
 
 public class AccountRepository extends Repository {
-
-	private static final Logger LOGGER = LogManager.getLogger(AccountRepository.class);
 
 	public String transfer(long accountFromId, long accountToId, BigDecimal amount) {
 		Account accountFrom = SESSION.get(Account.class, accountFromId);
@@ -36,50 +32,48 @@ public class AccountRepository extends Repository {
 		return "Transfer successful!";
 	}
 
-	public String create(String accountNumber, BigDecimal balance, String accountType) {
+	public long create(String accountNumber, BigDecimal balance, String accountType, User user) {
+		long returnId;
 		Account account = new Account();
 
-		try {
-			account.setAccountNumber(accountNumber);
-			account.setBalance(balance);
-			account.setAccountType(accountType);
-			account.setUser(user);
-		} catch (AccountDataValidationException e) {
-			return e.getMessage();
-		}
+		account.setAccountNumber(accountNumber);
+		account.setBalance(balance);
+		account.setAccountType(accountType);
+		account.setUserObj(user);
 
 		SESSION.beginTransaction();
 
 		try {
-			SESSION.save(account);
+			returnId = (long) SESSION.save(account);
 			SESSION.getTransaction().commit();
 		} catch (ConstraintViolationException e) {
-			return "Account number already exists!";
+			SESSION.getTransaction().rollback();
+			throw e;
 		}
 
-		LOGGER.info("new account : " + user.getUsername());
-		return "Account created succesfully!";
+		return returnId;
 	}
 
-	public List<Account> getForCurrentUser() {
+	@SuppressWarnings("unchecked")
+	public List<Account> getForUser(long userId) {
 		SESSION.beginTransaction();
 
-		List<Account> accounts = user.getAccounts();
+		List<Account> accounts = SESSION.createQuery("from Account where user_id = :user_id")
+				.setParameter("user_id", userId).list();
 
 		SESSION.getTransaction().commit();
 
 		return accounts;
 	}
 
-	public Account getForCurrentUserByNumber(String accountNumber) {
+	public Account getForUserByNumber(long userId, String accountNumber) {
 		SESSION.beginTransaction();
 
 		Account account;
 		try {
 			account = (Account) SESSION
 					.createQuery("from Account where user_id = :user_id and account_number = :account_number")
-					.setParameter("user_id", user.getId()).setParameter("account_number", accountNumber)
-					.getSingleResult();
+					.setParameter("user_id", userId).setParameter("account_number", accountNumber).getSingleResult();
 		} catch (NoResultException e) {
 			account = null;
 		} finally {
@@ -90,12 +84,12 @@ public class AccountRepository extends Repository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Account> getForCurrentUserByTypeExcept(String accountType, String accountNumber) {
+	public List<Account> getForUserByTypeExcept(long userId, String accountType, String accountNumber) {
 		SESSION.beginTransaction();
 
 		List<Account> accounts = SESSION.createQuery(
 				"from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
-				.setParameter("user_id", user.getId()).setParameter("account_type", accountType)
+				.setParameter("user_id", userId).setParameter("account_type", accountType)
 				.setParameter("account_number", accountNumber).list();
 
 		SESSION.getTransaction().commit();

@@ -1,6 +1,7 @@
 package main;
 
 import database.SessionFactoryObject;
+import service.UserService;
 import view.LoginMenu;
 
 /**
@@ -9,6 +10,8 @@ import view.LoginMenu;
 public class Main {
 
 	public static void main(String[] args) {
+		new UserService().create("user", "pass", "address", "email", "first", "last");
+
 		LoginMenu loginMenu = new LoginMenu();
 		loginMenu.show();
 

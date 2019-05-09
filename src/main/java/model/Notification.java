@@ -25,7 +25,7 @@ public class Notification {
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
 	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	private User userObj;
 
 	@Column(name = "details")
 	private String details;
@@ -51,17 +51,17 @@ public class Notification {
 	}
 
 	/**
-	 * @return the user
+	 * @return the userObj
 	 */
-	public User getUser() {
-		return user;
+	public User getUserObj() {
+		return userObj;
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param userObj the userObj to set
 	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserObj(User userObj) {
+		this.userObj = userObj;
 	}
 
 	/**

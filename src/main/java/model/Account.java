@@ -31,7 +31,7 @@ public class Account {
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
 	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	private User userObj;
 
 	@Column(name = "account_number", nullable = false, unique = true)
 	private String accountNumber;
@@ -48,7 +48,7 @@ public class Account {
 	@Column(name = "updated_time")
 	private LocalDateTime updatedTime;
 
-	@OneToMany(mappedBy = "account", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+	@OneToMany(mappedBy = "accountObj", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	private List<Transaction> transactions;
 
@@ -67,17 +67,17 @@ public class Account {
 	}
 
 	/**
-	 * @return the user
+	 * @return the userObj
 	 */
-	public User getUser() {
-		return user;
+	public User getUserObj() {
+		return userObj;
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param userObj the userObj to set
 	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserObj(User userObj) {
+		this.userObj = userObj;
 	}
 
 	/**

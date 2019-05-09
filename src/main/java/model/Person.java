@@ -3,6 +3,7 @@ package model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,9 +20,12 @@ public class Person {
 	@Column(name = "id")
 	private long id;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	private User userObj;
+
+	@Column(name = "email", nullable = false)
+	private String email;
 
 	@Column(name = "address", nullable = false)
 	private String address;
@@ -47,17 +51,31 @@ public class Person {
 	}
 
 	/**
-	 * @return the user
+	 * @return the userObj
 	 */
-	public User getUser() {
-		return user;
+	public User getUserObj() {
+		return userObj;
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param userObj the userObj to set
 	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserObj(User userObj) {
+		this.userObj = userObj;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	/**

@@ -7,7 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import collections.AccountType;
 import model.Account;
-import repository.AccountRepository;
+import service.AccountService;
 import utils.CreateTable;
 
 /**
@@ -17,7 +17,7 @@ public class AccountMenu extends Menu {
 
 	private final String TILE_FILE_PATH = "files/account_menu_title.txt";
 
-	private final AccountRepository ACCOUNT_REPOSITORY = new AccountRepository();
+	private final AccountService ACCOUNT_SERVICE = new AccountService();
 
 	public void show() {
 		printTitle(TILE_FILE_PATH);
@@ -56,7 +56,7 @@ public class AccountMenu extends Menu {
 	}
 
 	private void list() {
-		List<Account> accounts = ACCOUNT_REPOSITORY.getForCurrentUser();
+		List<Account> accounts = ACCOUNT_SERVICE.getForUser(user.getId());
 		CONSOLE.printTable(CreateTable.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 	}
 
@@ -103,7 +103,7 @@ public class AccountMenu extends Menu {
 			break;
 		}
 
-		return ACCOUNT_REPOSITORY.create(accountNumber, balance, accountType);
+		return ACCOUNT_SERVICE.create(accountNumber, balance, accountType, user.getId());
 	}
 
 	private String transfer() {
@@ -126,7 +126,7 @@ public class AccountMenu extends Menu {
 		String accountType = accountFrom.getAccountType();
 
 		// list all compatible accounts
-		List<Account> destinationAccounts = ACCOUNT_REPOSITORY.getForCurrentUserByTypeExcept(accountType,
+		List<Account> destinationAccounts = ACCOUNT_SERVICE.getForUserByTypeExcept(user.getId(), accountType,
 				accountNumber);
 		if (destinationAccounts.isEmpty()) {
 			return "No valid destination accounts!";
@@ -151,7 +151,7 @@ public class AccountMenu extends Menu {
 			BigDecimal amount = new BigDecimal(
 					CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
 			// execute the transfer
-			return ACCOUNT_REPOSITORY.transfer(accountFrom.getId(), accountTo.getId(), amount);
+			return ACCOUNT_SERVICE.transfer(accountFrom.getId(), accountTo.getId(), amount);
 		} catch (NumberFormatException e) {
 			return "Invalid sum!";
 		}

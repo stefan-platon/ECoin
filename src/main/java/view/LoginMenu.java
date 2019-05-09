@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import exceptions.UserNotFoundException;
-import repository.UserRepository;
+import service.UserService;
 
 /**
  * Class responsible the user login menu.
@@ -14,6 +14,8 @@ public class LoginMenu extends Menu {
 	private static final Logger LOGGER = LogManager.getLogger(LoginMenu.class);
 
 	private final String TILE_FILE_PATH = "files/login_menu_title.txt";
+
+	private final UserService USER_SERVICE = new UserService();
 
 	public void show() {
 		printTitle(TILE_FILE_PATH);
@@ -62,7 +64,7 @@ public class LoginMenu extends Menu {
 
 			// get user based on credentials
 			try {
-				user = new UserRepository().get(username, password);
+				user = USER_SERVICE.getByCredentials(username, password);
 
 				LOGGER.info("user logged in : " + user.getUsername());
 				return "Welcome " + user.getUsername() + "!";

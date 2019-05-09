@@ -25,13 +25,16 @@ public class Transaction {
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
 	@JoinColumn(name = "account_id", nullable = false)
-	private Account account;
+	private Account accountObj;
 
-	@Column(name = "to_account", nullable = false)
-	private String toAccount;
+	@Column(name = "account", nullable = false)
+	private String account;
 
-	@Column(name = "balance", nullable = false)
-	private BigDecimal balance;
+	@Column(name = "type", nullable = false)
+	private String type;
+
+	@Column(name = "amount", nullable = false)
+	private BigDecimal amount;
 
 	@Column(name = "details")
 	private String details;
@@ -54,45 +57,59 @@ public class Transaction {
 	}
 
 	/**
+	 * @return the accountObj
+	 */
+	public Account getAccountObj() {
+		return accountObj;
+	}
+
+	/**
+	 * @param accountObj the accountObj to set
+	 */
+	public void setAccountObj(Account accountObj) {
+		this.accountObj = accountObj;
+	}
+
+	/**
 	 * @return the account
 	 */
-	public Account getAccount() {
+	public String getAccount() {
 		return account;
 	}
 
 	/**
 	 * @param account the account to set
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(String account) {
 		this.account = account;
 	}
 
 	/**
-	 * @return the toAccount
+	 * @return the type
 	 */
-	public String getToAccount() {
-		return toAccount;
+	public String getType() {
+		return type;
 	}
 
 	/**
-	 * @param toAccount the toAccount to set
+	 * @param type the type to set
 	 */
-	public void setToAccount(String toAccount) {
-		this.toAccount = toAccount;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	/**
-	 * @return the balance
+	 * @return the amount
 	 */
-	public BigDecimal getBalance() {
-		return balance;
+	public BigDecimal getAmount() {
+		return amount;
 	}
 
 	/**
-	 * @param balance the balance to set
+	 * @param amount the amount to set
 	 */
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
 	}
 
 	/**
