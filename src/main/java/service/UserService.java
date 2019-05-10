@@ -23,18 +23,22 @@ public class UserService {
 
 	public User create(String username, String password, String address, String email, String firstName,
 			String lastName) {
-		long userId;
+		long id;
 
 		try {
-			userId = USER_REPOSITORY.create(username, password);
+			id = USER_REPOSITORY.create(username, password);
 		} catch (UniqueDatabaseConstraintException e) {
 			return null;
 		}
 
 		// get created user
-		User user = USER_REPOSITORY.getById(userId);
+		User user = USER_REPOSITORY.getById(id);
 
-		new PersonService().create(address, email, firstName, lastName, user);
+		try {
+			new PersonService().create(address, email, firstName, lastName, user);
+		} catch (UniqueDatabaseConstraintException e) {
+			return null;
+		}
 
 		LOGGER.info("new account : " + user.getUsername());
 

@@ -7,17 +7,20 @@ import javax.persistence.NoResultException;
 
 import org.hibernate.exception.ConstraintViolationException;
 
+import exceptions.HTTPCustomException;
 import model.Account;
+import model.Notification;
+import model.Transaction;
 import model.User;
 
 public class AccountRepository extends Repository {
 
-	public String transfer(long accountFromId, long accountToId, BigDecimal amount) {
+	public void transfer(long accountFromId, long accountToId, BigDecimal amount, String details) {
 		Account accountFrom = SESSION.get(Account.class, accountFromId);
 		Account accountTo = SESSION.get(Account.class, accountToId);
 
 		if (accountFrom.getBalance().compareTo(amount) == -1) {
-			return "Entered sum is too big for this account!";
+			throw new HTTPCustomException("Entered sum is too big for this account!");
 		}
 
 		SESSION.beginTransaction();
@@ -27,9 +30,46 @@ public class AccountRepository extends Repository {
 		SESSION.save(accountFrom);
 		SESSION.save(accountTo);
 
-		SESSION.getTransaction().commit();
+		Notification notification = new Notification();
+		notification.setDetails(details);
+		notification.setUserObj(accountFrom.getUserObj());
+		SESSION.save(notification);
 
-		return "Transfer successful!";
+		// source account
+		Transaction transaction = new Transaction();
+		transaction.setAccountObj(accountFrom);
+		transaction.setAccount(accountFrom.getAccountNumber());
+		transaction.setAmount(amount);
+		transaction.setDetails(details);
+		transaction.setType("outgoing");
+		SESSION.save(transaction);
+
+		// destination account
+		transaction = new Transaction();
+		transaction.setAccountObj(accountTo);
+		transaction.setAccount(accountTo.getAccountNumber());
+		transaction.setAmount(amount);
+		transaction.setDetails(details);
+		transaction.setType("incoming");
+
+		SESSION.getTransaction().commit();
+	}
+
+	public Account getById(long id) {
+		Account account = null;
+
+		SESSION.beginTransaction();
+
+		try {
+			account = (Account) SESSION.createQuery("from Account where id = :id").setParameter("id", id)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} finally {
+			SESSION.getTransaction().commit();
+		}
+
+		return account;
 	}
 
 	public long create(String accountNumber, BigDecimal balance, String accountType, User user) {

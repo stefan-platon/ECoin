@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 
 import exceptions.AccountDataValidationException;
+import exceptions.HTTPCustomException;
 import model.Account;
 import model.User;
 import repository.AccountRepository;
@@ -18,29 +19,30 @@ public class AccountService {
 
 	private AccountRepository ACCOUNT_REPOSITORY = new AccountRepository();
 
-	public String create(String accountNumber, BigDecimal balance, String accountType, long userId) {
+	public Account create(String accountNumber, BigDecimal balance, String accountType, long userId) {
 		User user = new UserService().getById(userId);
 
 		if (user == null) {
-			return "Could not find user!";
+			throw new HTTPCustomException("Could not find user!");
 		}
 
+		long id;
 		try {
-			ACCOUNT_REPOSITORY.create(accountNumber, balance, accountType, user);
+			id = ACCOUNT_REPOSITORY.create(accountNumber, balance, accountType, user);
 		} catch (AccountDataValidationException e) {
-			return e.getMessage();
+			throw new HTTPCustomException(e.getMessage());
 		} catch (ConstraintViolationException e) {
-			return "Account number already exists!";
+			throw new HTTPCustomException("Account number already exists!");
 		} catch (Exception e) {
-			return e.getMessage();
+			throw new HTTPCustomException(e.getMessage());
 		}
 
 		LOGGER.info("new account : " + accountNumber);
-		return "Account created succesfully!";
+		return ACCOUNT_REPOSITORY.getById(id);
 	}
 
-	public String transfer(long accountFromId, long accountToId, BigDecimal amount) {
-		return ACCOUNT_REPOSITORY.transfer(accountFromId, accountToId, amount);
+	public void transfer(long accountFromId, long accountToId, BigDecimal amount) {
+		ACCOUNT_REPOSITORY.transfer(accountFromId, accountToId, amount);
 	}
 
 	public List<Account> getForUser(long userId) {

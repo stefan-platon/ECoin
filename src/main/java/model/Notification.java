@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
@@ -108,12 +107,8 @@ public class Notification {
 
 	@PrePersist
 	private void initializeCreatedTime() {
-		this.createdTime = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	private void initializeSentTime() {
 		this.sentTime = LocalDateTime.now();
+		this.createdTime = LocalDateTime.now();
 	}
 
 }

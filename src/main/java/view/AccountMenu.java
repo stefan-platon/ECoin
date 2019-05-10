@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import collections.AccountType;
+import exceptions.HTTPCustomException;
 import model.Account;
 import service.AccountService;
 import utils.CreateTable;
@@ -103,7 +104,12 @@ public class AccountMenu extends Menu {
 			break;
 		}
 
-		return ACCOUNT_SERVICE.create(accountNumber, balance, accountType, user.getId());
+		try {
+			ACCOUNT_SERVICE.create(accountNumber, balance, accountType, user.getId());
+			return "Account created succesfully!";
+		} catch (HTTPCustomException e) {
+			return e.getMessage();
+		}
 	}
 
 	private String transfer() {
@@ -151,7 +157,12 @@ public class AccountMenu extends Menu {
 			BigDecimal amount = new BigDecimal(
 					CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
 			// execute the transfer
-			return ACCOUNT_SERVICE.transfer(accountFrom.getId(), accountTo.getId(), amount);
+			try {
+				ACCOUNT_SERVICE.transfer(accountFrom.getId(), accountTo.getId(), amount);
+				return "Transfer succesfull!";
+			} catch (HTTPCustomException e) {
+				return e.getMessage();
+			}
 		} catch (NumberFormatException e) {
 			return "Invalid sum!";
 		}
