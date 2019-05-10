@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 
 import exceptions.AccountDataValidationException;
-import exceptions.HTTPCustomException;
+import exceptions.HTTPClientCustomException;
 import model.Account;
 import model.User;
 import repository.AccountRepository;
@@ -23,26 +23,26 @@ public class AccountService {
 		User user = new UserService().getById(userId);
 
 		if (user == null) {
-			throw new HTTPCustomException("Could not find user!");
+			throw new HTTPClientCustomException("Could not find user!");
 		}
 
 		long id;
 		try {
 			id = ACCOUNT_REPOSITORY.create(accountNumber, balance, accountType, user);
 		} catch (AccountDataValidationException e) {
-			throw new HTTPCustomException(e.getMessage());
+			throw new HTTPClientCustomException(e.getMessage());
 		} catch (ConstraintViolationException e) {
-			throw new HTTPCustomException("Account number already exists!");
+			throw new HTTPClientCustomException("Account number already exists!");
 		} catch (Exception e) {
-			throw new HTTPCustomException(e.getMessage());
+			throw new HTTPClientCustomException(e.getMessage());
 		}
 
 		LOGGER.info("new account : " + accountNumber);
 		return ACCOUNT_REPOSITORY.getById(id);
 	}
 
-	public void transfer(long accountFromId, long accountToId, BigDecimal amount) {
-		ACCOUNT_REPOSITORY.transfer(accountFromId, accountToId, amount);
+	public void transfer(long accountFromId, long accountToId, BigDecimal amount, String details) {
+		ACCOUNT_REPOSITORY.transfer(accountFromId, accountToId, amount, details);
 	}
 
 	public List<Account> getForUser(long userId) {

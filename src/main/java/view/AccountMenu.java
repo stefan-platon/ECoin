@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import collections.AccountType;
-import exceptions.HTTPCustomException;
+import exceptions.HTTPClientCustomException;
 import model.Account;
 import service.AccountService;
 import utils.CreateTable;
@@ -84,12 +84,13 @@ public class AccountMenu extends Menu {
 			break;
 		}
 
+		// get account type
 		String accountType = CONSOLE.printForResponse("-> account type : ");
-
 		if (!AccountType.isType(accountType)) {
 			return "Account type not supported.";
 		}
 
+		// get balance
 		BigDecimal balance;
 		switch (CONSOLE.printForResponse("Do you want to add a sum right away? (y/n) : ")) {
 		case "y":
@@ -107,14 +108,15 @@ public class AccountMenu extends Menu {
 		try {
 			ACCOUNT_SERVICE.create(accountNumber, balance, accountType, user.getId());
 			return "Account created succesfully!";
-		} catch (HTTPCustomException e) {
+		} catch (HTTPClientCustomException e) {
 			return e.getMessage();
 		}
 	}
 
 	private String transfer() {
 		// list all of the user's accounts
-		CONSOLE.printTable(CreateTable.createAccountsListTable(user.getAccounts(), "Number", "Balance", "Type"));
+		CONSOLE.printTable(CreateTable.createAccountsListTable(ACCOUNT_SERVICE.getForUser(user.getId()), "Number",
+				"Balance", "Type"));
 
 		// get source account
 		String accountNumber = CONSOLE.printForResponse("Select one of your accounts: \n -> account : ");
@@ -153,18 +155,32 @@ public class AccountMenu extends Menu {
 			return "Invalid destination account!";
 		}
 
+		// get amount
+		BigDecimal amount;
 		try {
-			BigDecimal amount = new BigDecimal(
+			amount = new BigDecimal(
 					CONSOLE.printForResponse("Enter how much do you want to transfer: \n -> amount : "));
-			// execute the transfer
-			try {
-				ACCOUNT_SERVICE.transfer(accountFrom.getId(), accountTo.getId(), amount);
-				return "Transfer succesfull!";
-			} catch (HTTPCustomException e) {
-				return e.getMessage();
-			}
 		} catch (NumberFormatException e) {
 			return "Invalid sum!";
+		}
+
+		// get details
+		String details;
+		switch (CONSOLE.printForResponse("Do you want to add some details? (y/n) : ")) {
+		case "y":
+			details = CONSOLE.printForResponse(" -> details : ");
+			break;
+		default:
+			details = null;
+			break;
+		}
+
+		// execute the transfer
+		try {
+			ACCOUNT_SERVICE.transfer(accountFrom.getId(), accountTo.getId(), amount, details);
+			return "Transfer succesfull!";
+		} catch (HTTPClientCustomException e) {
+			return e.getMessage();
 		}
 	}
 

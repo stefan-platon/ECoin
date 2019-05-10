@@ -7,7 +7,7 @@ import javax.persistence.NoResultException;
 
 import org.hibernate.exception.ConstraintViolationException;
 
-import exceptions.HTTPCustomException;
+import exceptions.HTTPClientCustomException;
 import model.Account;
 import model.Notification;
 import model.Transaction;
@@ -20,7 +20,7 @@ public class AccountRepository extends Repository {
 		Account accountTo = SESSION.get(Account.class, accountToId);
 
 		if (accountFrom.getBalance().compareTo(amount) == -1) {
-			throw new HTTPCustomException("Entered sum is too big for this account!");
+			throw new HTTPClientCustomException("Entered sum is too big for this account!");
 		}
 
 		SESSION.beginTransaction();
@@ -31,7 +31,12 @@ public class AccountRepository extends Repository {
 		SESSION.save(accountTo);
 
 		Notification notification = new Notification();
-		notification.setDetails(details);
+		StringBuilder notificationDetails = new StringBuilder();
+		notificationDetails.append(String.format("From : %s; ", accountFrom.getAccountNumber()));
+		notificationDetails.append(String.format("To : %s; ", accountTo.getAccountNumber()));
+		notificationDetails.append(String.format("Amount : %s; ", amount.toString()));
+		notificationDetails.append(String.format("Details : %s; ", details == null ? "" : details));
+		notification.setDetails(notificationDetails.toString());
 		notification.setUserObj(accountFrom.getUserObj());
 		SESSION.save(notification);
 
@@ -49,8 +54,8 @@ public class AccountRepository extends Repository {
 		transaction.setAccountObj(accountTo);
 		transaction.setAccount(accountTo.getAccountNumber());
 		transaction.setAmount(amount);
-		transaction.setDetails(details);
 		transaction.setType("incoming");
+		SESSION.save(transaction);
 
 		SESSION.getTransaction().commit();
 	}
@@ -80,6 +85,8 @@ public class AccountRepository extends Repository {
 		account.setBalance(balance);
 		account.setAccountType(accountType);
 		account.setUserObj(user);
+
+		user.getAccounts().add(account);
 
 		SESSION.beginTransaction();
 
