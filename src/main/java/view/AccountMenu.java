@@ -57,7 +57,7 @@ public class AccountMenu extends Menu {
 	}
 
 	private void list() {
-		List<Account> accounts = ACCOUNT_SERVICE.getForUser(user.getId());
+		List<Account> accounts = ACCOUNT_SERVICE.findByUser(user.getId());
 		CONSOLE.printTable(CreateTable.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 	}
 
@@ -115,7 +115,7 @@ public class AccountMenu extends Menu {
 
 	private String transfer() {
 		// list all of the user's accounts
-		CONSOLE.printTable(CreateTable.createAccountsListTable(ACCOUNT_SERVICE.getForUser(user.getId()), "Number",
+		CONSOLE.printTable(CreateTable.createAccountsListTable(ACCOUNT_SERVICE.findByUser(user.getId()), "Number",
 				"Balance", "Type"));
 
 		// get source account
@@ -134,8 +134,8 @@ public class AccountMenu extends Menu {
 		String accountType = accountFrom.getAccountType();
 
 		// list all compatible accounts
-		List<Account> destinationAccounts = ACCOUNT_SERVICE.getForUserByTypeExcept(user.getId(), accountType,
-				accountNumber);
+		List<Account> destinationAccounts = ACCOUNT_SERVICE.findByUserAndTypeExceptAccountNumber(user.getId(),
+				accountType, accountNumber);
 		if (destinationAccounts.isEmpty()) {
 			return "No valid destination accounts!";
 		}

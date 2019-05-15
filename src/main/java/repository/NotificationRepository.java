@@ -4,12 +4,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import model.Person;
+import model.Notification;
 
 @Repository
-public interface PersonRepository extends CustomRepository, CrudRepository<Person, Long> {
+public interface NotificationRepository extends CustomRepository, CrudRepository<Notification, Long> {
 
 	@Nullable
-	Person findById(long id);
+	Notification findById(long id);
 
 }

@@ -1,147 +1,28 @@
 package repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-import javax.persistence.NoResultException;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Repository;
 
-import org.hibernate.exception.ConstraintViolationException;
-
-import exceptions.HTTPClientCustomException;
 import model.Account;
-import model.Notification;
-import model.Transaction;
-import model.User;
 
-public class AccountRepository extends Repository {
+@Repository
+public interface AccountRepository extends CustomRepository, CrudRepository<Account, Long> {
 
-	public void transfer(long accountFromId, long accountToId, BigDecimal amount, String details) {
-		Account accountFrom = SESSION.get(Account.class, accountFromId);
-		Account accountTo = SESSION.get(Account.class, accountToId);
+	@Nullable
+	Account findById(long id);
 
-		if (accountFrom.getBalance().compareTo(amount) == -1) {
-			throw new HTTPClientCustomException("Entered sum is too big for this account!");
-		}
+	@Nullable
+	Account findFirstByUserAndAccountNumber(long userId, String accountNumber);
 
-		SESSION.beginTransaction();
+	List<Account> findByUser(long userId);
 
-		accountFrom.setBalance(accountFrom.getBalance().subtract(amount));
-		accountTo.setBalance(accountTo.getBalance().add(amount));
-		SESSION.save(accountFrom);
-		SESSION.save(accountTo);
-
-		Notification notification = new Notification();
-		StringBuilder notificationDetails = new StringBuilder();
-		notificationDetails.append(String.format("From : %s; ", accountFrom.getAccountNumber()));
-		notificationDetails.append(String.format("To : %s; ", accountTo.getAccountNumber()));
-		notificationDetails.append(String.format("Amount : %s; ", amount.toString()));
-		notificationDetails.append(String.format("Details : %s; ", details == null ? "" : details));
-		notification.setDetails(notificationDetails.toString());
-		notification.setUserObj(accountFrom.getUserObj());
-		SESSION.save(notification);
-
-		// source account
-		Transaction transaction = new Transaction();
-		transaction.setAccountObj(accountFrom);
-		transaction.setAccount(accountFrom.getAccountNumber());
-		transaction.setAmount(amount);
-		transaction.setDetails(details);
-		transaction.setType("outgoing");
-		SESSION.save(transaction);
-
-		// destination account
-		transaction = new Transaction();
-		transaction.setAccountObj(accountTo);
-		transaction.setAccount(accountTo.getAccountNumber());
-		transaction.setAmount(amount);
-		transaction.setType("incoming");
-		SESSION.save(transaction);
-
-		SESSION.getTransaction().commit();
-	}
-
-	public Account getById(long id) {
-		Account account = null;
-
-		SESSION.beginTransaction();
-
-		try {
-			account = (Account) SESSION.createQuery("from Account where id = :id").setParameter("id", id)
-					.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		} finally {
-			SESSION.getTransaction().commit();
-		}
-
-		return account;
-	}
-
-	public long create(String accountNumber, BigDecimal balance, String accountType, User user) {
-		long returnId;
-		Account account = new Account();
-
-		account.setAccountNumber(accountNumber);
-		account.setBalance(balance);
-		account.setAccountType(accountType);
-		account.setUserObj(user);
-
-		user.getAccounts().add(account);
-
-		SESSION.beginTransaction();
-
-		try {
-			returnId = (long) SESSION.save(account);
-			SESSION.getTransaction().commit();
-		} catch (ConstraintViolationException e) {
-			SESSION.getTransaction().rollback();
-			throw e;
-		}
-
-		return returnId;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Account> getForUser(long userId) {
-		SESSION.beginTransaction();
-
-		List<Account> accounts = SESSION.createQuery("from Account where user_id = :user_id")
-				.setParameter("user_id", userId).list();
-
-		SESSION.getTransaction().commit();
-
-		return accounts;
-	}
-
-	public Account getForUserByNumber(long userId, String accountNumber) {
-		SESSION.beginTransaction();
-
-		Account account;
-		try {
-			account = (Account) SESSION
-					.createQuery("from Account where user_id = :user_id and account_number = :account_number")
-					.setParameter("user_id", userId).setParameter("account_number", accountNumber).getSingleResult();
-		} catch (NoResultException e) {
-			account = null;
-		} finally {
-			SESSION.getTransaction().commit();
-		}
-
-		return account;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Account> getForUserByTypeExcept(long userId, String accountType, String accountNumber) {
-		SESSION.beginTransaction();
-
-		List<Account> accounts = SESSION.createQuery(
-				"from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
-				.setParameter("user_id", userId).setParameter("account_type", accountType)
-				.setParameter("account_number", accountNumber).list();
-
-		SESSION.getTransaction().commit();
-
-		return accounts;
-	}
+	@Query("from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
+	List<Account> findByUserAndTypeExceptAccountNumber(@Param("user_id") long userId,
+			@Param("account_type") String accountType, @Param("account_number") String accountNumber);
 
 }

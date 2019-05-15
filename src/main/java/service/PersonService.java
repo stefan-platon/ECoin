@@ -1,24 +1,35 @@
 package service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import exceptions.UniqueDatabaseConstraintException;
 import model.Person;
 import model.User;
 import repository.PersonRepository;
 
+@Service
 public class PersonService {
 
-	private PersonRepository PERSON_REPOSITORY = new PersonRepository();
+	@Autowired
+	private PersonRepository PERSON_REPOSITORY;
 
-	public Person create(String sddress, String email, String firstName, String lastName, User user) {
-		long id;
+	public Person create(String address, String email, String firstName, String lastName, User user) {
+		Person person = new Person();
 
 		try {
-			id = PERSON_REPOSITORY.create(sddress, email, firstName, lastName, user);
+			person.setAddress(address);
+			person.setEmail(email);
+			person.setFirstName(firstName);
+			person.setLastName(lastName);
+			person.setUserObj(user);
 		} catch (UniqueDatabaseConstraintException e) {
-			return null;
+			throw new UniqueDatabaseConstraintException("Email already exists!");
 		}
 
-		return PERSON_REPOSITORY.getById(id);
+		person = PERSON_REPOSITORY.save(person);
+
+		return person;
 	}
 
 }

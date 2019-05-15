@@ -4,12 +4,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import model.Person;
+import model.Transaction;
 
 @Repository
-public interface PersonRepository extends CustomRepository, CrudRepository<Person, Long> {
+public interface TransactionRepository extends CustomRepository, CrudRepository<Transaction, Long> {
 
 	@Nullable
-	Person findById(long id);
+	Transaction findById(long id);
 
 }
