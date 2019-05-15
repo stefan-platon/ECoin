@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import model.User;
 
 @Repository
-public interface UserRepository extends CustomRepository, CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
 
 	@Nullable
 	User findFirstByUsernameAndPassword(String username, String password);

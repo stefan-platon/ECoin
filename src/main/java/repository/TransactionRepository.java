@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import model.Transaction;
 
 @Repository
-public interface TransactionRepository extends CustomRepository, CrudRepository<Transaction, Long> {
+public interface TransactionRepository extends CrudRepository<Transaction, Long> {
 
 	@Nullable
 	Transaction findById(long id);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import model.Notification;
 
 @Repository
-public interface NotificationRepository extends CustomRepository, CrudRepository<Notification, Long> {
+public interface NotificationRepository extends CrudRepository<Notification, Long> {
 
 	@Nullable
 	Notification findById(long id);

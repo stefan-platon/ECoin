@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import model.Person;
 
 @Repository
-public interface PersonRepository extends CustomRepository, CrudRepository<Person, Long> {
+public interface PersonRepository extends CrudRepository<Person, Long> {
 
 	@Nullable
 	Person findById(long id);

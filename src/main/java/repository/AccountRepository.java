@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import model.Account;
 
 @Repository
-public interface AccountRepository extends CustomRepository, CrudRepository<Account, Long> {
+public interface AccountRepository extends CrudRepository<Account, Long> {
 
 	@Nullable
 	Account findById(long id);
