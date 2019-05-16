@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 
 import collections.AccountType;
-import exceptions.HTTPClientCustomException;
+import controller.AccountController;
 import model.Account;
-import service.AccountService;
 import utils.CreateTable;
 
 /**
@@ -18,7 +18,7 @@ public class AccountMenu extends Menu {
 
 	private final String TILE_FILE_PATH = "files/account_menu_title.txt";
 
-	private final AccountService ACCOUNT_SERVICE = new AccountService();
+	private final AccountController ACCOUNT_CONTROLLER = new AccountController();
 
 	public void show() {
 		printTitle(TILE_FILE_PATH);
@@ -57,7 +57,9 @@ public class AccountMenu extends Menu {
 	}
 
 	private void list() {
-		List<Account> accounts = ACCOUNT_SERVICE.findByUser(user.getId());
+		List<Account> accounts;
+
+		accounts = ACCOUNT_CONTROLLER.findByUser(user.getId());
 		CONSOLE.printTable(CreateTable.createAccountsListTable(accounts, "Number", "Balance", "Type"));
 	}
 
@@ -106,16 +108,16 @@ public class AccountMenu extends Menu {
 		}
 
 		try {
-			ACCOUNT_SERVICE.create(accountNumber, balance, accountType, user.getId());
+			ACCOUNT_CONTROLLER.create(accountNumber, balance, accountType, user.getId());
 			return "Account created succesfully!";
-		} catch (HTTPClientCustomException e) {
+		} catch (HttpClientErrorException e) {
 			return e.getMessage();
 		}
 	}
 
 	private String transfer() {
 		// list all of the user's accounts
-		CONSOLE.printTable(CreateTable.createAccountsListTable(ACCOUNT_SERVICE.findByUser(user.getId()), "Number",
+		CONSOLE.printTable(CreateTable.createAccountsListTable(ACCOUNT_CONTROLLER.findByUser(user.getId()), "Number",
 				"Balance", "Type"));
 
 		// get source account
@@ -134,7 +136,7 @@ public class AccountMenu extends Menu {
 		String accountType = accountFrom.getAccountType();
 
 		// list all compatible accounts
-		List<Account> destinationAccounts = ACCOUNT_SERVICE.findByUserAndTypeExceptAccountNumber(user.getId(),
+		List<Account> destinationAccounts = ACCOUNT_CONTROLLER.findByUserAndTypeExceptAccountNumber(user.getId(),
 				accountType, accountNumber);
 		if (destinationAccounts.isEmpty()) {
 			return "No valid destination accounts!";
@@ -177,9 +179,9 @@ public class AccountMenu extends Menu {
 
 		// execute the transfer
 		try {
-			ACCOUNT_SERVICE.transfer(accountFrom.getId(), accountTo.getId(), amount, details);
+			ACCOUNT_CONTROLLER.transfer(accountFrom.getId(), accountTo.getId(), amount, details);
 			return "Transfer succesfull!";
-		} catch (HTTPClientCustomException e) {
+		} catch (HttpClientErrorException e) {
 			return e.getMessage();
 		}
 	}

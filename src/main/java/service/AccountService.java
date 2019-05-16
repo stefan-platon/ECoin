@@ -83,7 +83,6 @@ public class AccountService {
 
 		// destination account
 		new TransactionService().create(accountTo, accountTo.getAccountNumber(), amount, null, "incoming");
-
 	}
 
 	public List<Account> findByUser(long userId) {
