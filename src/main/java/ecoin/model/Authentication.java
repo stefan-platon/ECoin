@@ -14,8 +14,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "notification")
-public class Notification {
+@Table(name = "authentication")
+public class Authentication {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +26,11 @@ public class Notification {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User userObj;
 
-	@Column(name = "details")
-	private String details;
+	@Column(name = "token", nullable = false, unique = true)
+	private String token;
 
 	@Column(name = "created_time", nullable = false)
 	private LocalDateTime createdTime;
-
-	@Column(name = "sent_time")
-	private LocalDateTime sentTime;
 
 	/**
 	 * @return the id
@@ -64,17 +61,17 @@ public class Notification {
 	}
 
 	/**
-	 * @return the details
+	 * @return the token
 	 */
-	public String getDetails() {
-		return details;
+	public String getToken() {
+		return token;
 	}
 
 	/**
-	 * @param details the details to set
+	 * @param token the token to set
 	 */
-	public void setDetails(String details) {
-		this.details = details;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	/**
@@ -91,23 +88,8 @@ public class Notification {
 		this.createdTime = createdTime;
 	}
 
-	/**
-	 * @return the sentTime
-	 */
-	public LocalDateTime getSentTime() {
-		return sentTime;
-	}
-
-	/**
-	 * @param sentTime the sentTime to set
-	 */
-	public void setSentTime(LocalDateTime sentTime) {
-		this.sentTime = sentTime;
-	}
-
 	@PrePersist
-	private void initializeTime() {
-		this.sentTime = LocalDateTime.now();
+	private void initializeCreatedTime() {
 		this.createdTime = LocalDateTime.now();
 	}
 

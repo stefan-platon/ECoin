@@ -1,13 +1,13 @@
-package service;
+package ecoin.service;
 
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import model.Account;
-import model.Transaction;
-import repository.TransactionRepository;
+import ecoin.model.Account;
+import ecoin.model.Transaction;
+import ecoin.repository.TransactionRepository;
 
 @Service
 public class TransactionService {

@@ -1,52 +1,84 @@
-package controller;
+package ecoin.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
+import javax.servlet.http.HttpServletResponse;
 
-import model.Account;
-import service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import ecoin.exceptions.HTTPCustomClientException;
+import ecoin.model.Account;
+import ecoin.service.AccountService;
 
 @RestController
-public class AccountController {
+public class AccountController extends Controller {
 
 	@Autowired
-	private AccountService ACCOUNT_SERVICE;
+	AccountService ACCOUNT_SERVICE;
 
-	@RequestMapping(value = "/account", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public Account create(@RequestBody String accountNumber, @RequestBody BigDecimal balance,
-			@RequestBody String accountType, @RequestBody long userId) throws HttpClientErrorException {
-		return ACCOUNT_SERVICE.create(accountNumber, balance, accountType, userId);
+	@ExceptionHandler({ Exception.class })
+	void handleBadRequests(HttpServletResponse response) throws IOException {
+		response.sendError(HttpStatus.BAD_REQUEST.value());
 	}
 
-	@RequestMapping(value = "/account/transfer", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public void transfer(@RequestBody long accountFromId, @RequestBody long accountToId, @RequestBody BigDecimal amount,
-			@RequestBody String details) throws HttpClientErrorException {
-		ACCOUNT_SERVICE.transfer(accountFromId, accountToId, amount, details);
+	@PostMapping("/account/transfer/{token}")
+	public void transfer(@PathVariable String token, @RequestBody long accountFromId, @RequestBody long accountToId,
+			@RequestBody BigDecimal amount, @RequestBody String details) {
+		if (checkToken(token)) {
+			ACCOUNT_SERVICE.transfer(token, accountFromId, accountToId, amount, details);
+		} else {
+			throw new HTTPCustomClientException();
+		}
 	}
 
-	@RequestMapping(value = "/user/{user_id}", method = RequestMethod.GET, produces = "application/json")
-	public List<Account> findByUser(@PathVariable long userId) throws HttpClientErrorException {
-		return ACCOUNT_SERVICE.findByUser(userId);
+	@PostMapping("/account/{token}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Account create(@PathVariable String token, @RequestBody String accountNumber,
+			@RequestBody BigDecimal balance, @RequestBody String accountType, @RequestBody long userId) {
+		if (checkToken(token)) {
+			return ACCOUNT_SERVICE.create(token, accountNumber, balance, accountType, userId);
+		} else {
+			throw new HTTPCustomClientException();
+		}
 	}
 
-	@RequestMapping(value = "/account/findFirstByUserAndAccountNumber", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public Account findFirstByUserAndAccountNumber(@RequestBody long userId, @RequestBody String accountNumber)
-			throws HttpClientErrorException {
-		return ACCOUNT_SERVICE.findFirstByUserAndAccountNumber(userId, accountNumber);
+	@GetMapping("/account/{token}/{user_id}")
+	public List<Account> findByUser(@PathVariable String token, @PathVariable long userId) {
+		if (checkToken(token)) {
+			return ACCOUNT_SERVICE.findByUser(token, userId);
+		} else {
+			throw new HTTPCustomClientException();
+		}
 	}
 
-	@RequestMapping(value = "/account/findByUserAndTypeExceptAccountNumber", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public List<Account> findByUserAndTypeExceptAccountNumber(@RequestBody long userId, @RequestBody String accountType,
-			@RequestBody String accountNumber) throws HttpClientErrorException {
-		return ACCOUNT_SERVICE.findByUserAndTypeExceptAccountNumber(userId, accountType, accountNumber);
+	@PostMapping("/account/findFirstByUserAndAccountNumber/{token}")
+	public Account findFirstByUserAndAccountNumber(@PathVariable String token, @RequestBody long userId,
+			@RequestBody String accountNumber) {
+		if (checkToken(token)) {
+			return ACCOUNT_SERVICE.findFirstByUserAndAccountNumber(token, userId, accountNumber);
+		} else {
+			throw new HTTPCustomClientException();
+		}
+	}
+
+	@PostMapping("/account/findByUserAndTypeExceptAccountNumber/{token}")
+	public List<Account> findByUserAndTypeExceptAccountNumber(@PathVariable String token, @RequestBody long userId,
+			@RequestBody String accountType, @RequestBody String accountNumber) {
+		if (checkToken(token)) {
+			return ACCOUNT_SERVICE.findByUserAndTypeExceptAccountNumber(token, userId, accountType, accountNumber);
+		} else {
+			throw new HTTPCustomClientException();
+		}
 	}
 
 }

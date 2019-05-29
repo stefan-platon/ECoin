@@ -1,4 +1,4 @@
-package model;
+package ecoin.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,8 +17,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
-import collections.AccountType;
-import exceptions.AccountDataValidationException;
+import ecoin.collections.AccountType;
+import ecoin.exceptions.AccountDataValidationException;
 
 @Entity
 @Table(name = "account")

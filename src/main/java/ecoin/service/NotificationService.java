@@ -1,12 +1,12 @@
-package service;
+package ecoin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import exceptions.UniqueDatabaseConstraintException;
-import model.Notification;
-import model.User;
-import repository.NotificationRepository;
+import ecoin.exceptions.UniqueDatabaseConstraintException;
+import ecoin.model.Notification;
+import ecoin.model.User;
+import ecoin.repository.NotificationRepository;
 
 @Service
 public class NotificationService {

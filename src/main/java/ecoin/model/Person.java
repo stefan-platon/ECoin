@@ -1,4 +1,4 @@
-package model;
+package ecoin.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

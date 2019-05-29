@@ -1,4 +1,4 @@
-package collections;
+package ecoin.collections;
 
 public enum AccountType {
 

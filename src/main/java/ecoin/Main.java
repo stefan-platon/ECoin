@@ -1,15 +1,21 @@
-package main;
+package ecoin;
 
-import view.LoginMenu;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+//import view.LoginMenu;
 
 /**
  * Starting point of the program.
  */
+@SpringBootApplication
+@EnableJpaRepositories("/ecoin/repository")
 public class Main {
 
 	public static void main(String[] args) {
-		LoginMenu loginMenu = new LoginMenu();
-		loginMenu.show();
+		SpringApplication.run(Main.class, args);
 	}
 
 }

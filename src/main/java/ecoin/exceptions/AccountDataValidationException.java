@@ -1,4 +1,4 @@
-package exceptions;
+package ecoin.exceptions;
 
 public class AccountDataValidationException extends RuntimeException {
 

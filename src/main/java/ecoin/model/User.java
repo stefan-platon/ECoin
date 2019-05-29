@@ -1,4 +1,4 @@
-package model;
+package ecoin.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +42,10 @@ public class User {
 	@OneToMany(mappedBy = "userObj", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	private List<Notification> notifications;
+
+	@OneToMany(mappedBy = "userObj", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<Authentication> authentications;
 
 	/**
 	 * @return the id

@@ -1,4 +1,4 @@
-package service;
+package ecoin.service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -7,25 +7,44 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import exceptions.AccountDataValidationException;
-import exceptions.HTTPClientCustomException;
-import model.Account;
-import model.User;
-import repository.AccountRepository;
+import ecoin.exceptions.AccountDataValidationException;
+import ecoin.exceptions.HTTPCustomClientException;
+import ecoin.exceptions.UserNotFoundException;
+import ecoin.model.Account;
+import ecoin.model.User;
+import ecoin.repository.AccountRepository;
 
+@Service
 public class AccountService {
 
 	private static final Logger LOGGER = LogManager.getLogger(AccountService.class);
 
 	@Autowired
-	private AccountRepository ACCOUNT_REPOSITORY;
+	AccountRepository ACCOUNT_REPOSITORY;
 
-	public Account create(String accountNumber, BigDecimal balance, String accountType, long userId) {
+	@Autowired
+	UserService USER_SERVICE;
+
+	public Account create(String token, Account account) {
+		User user = USER_SERVICE.getById(account.getUserObj().getId());
+
+		if (user == null) {
+			throw new UserNotFoundException("Could not find user!");
+		}
+
+		Account newAccount = ACCOUNT_REPOSITORY.save(account);
+		LOGGER.info("new account : " + newAccount.getAccountNumber());
+
+		return newAccount;
+	}
+
+	public Account create(String token, String accountNumber, BigDecimal balance, String accountType, long userId) {
 		User user = new UserService().getById(userId);
 
 		if (user == null) {
-			throw new HTTPClientCustomException("Could not find user!");
+			throw new UserNotFoundException("Could not find user!");
 		}
 
 		Account account = new Account();
@@ -36,11 +55,11 @@ public class AccountService {
 			account.setAccountType(accountType);
 			account.setUserObj(user);
 		} catch (AccountDataValidationException e) {
-			throw new HTTPClientCustomException(e.getMessage());
+			throw new HTTPCustomClientException(e.getMessage());
 		} catch (ConstraintViolationException e) {
-			throw new HTTPClientCustomException("Account number already exists!");
+			throw new HTTPCustomClientException("Account number already exists!");
 		} catch (Exception e) {
-			throw new HTTPClientCustomException(e.getMessage());
+			throw new HTTPCustomClientException(e.getMessage());
 		}
 
 		account = ACCOUNT_REPOSITORY.save(account);
@@ -50,19 +69,19 @@ public class AccountService {
 		return account;
 	}
 
-	public void transfer(long accountFromId, long accountToId, BigDecimal amount, String details) {
+	public void transfer(String token, long accountFromId, long accountToId, BigDecimal amount, String details) {
 		Account accountFrom = ACCOUNT_REPOSITORY.findById(accountFromId);
 		if (accountFrom == null) {
-			throw new HTTPClientCustomException("Inexistent source account!");
+			throw new HTTPCustomClientException("Inexistent source account!");
 		}
 
 		Account accountTo = ACCOUNT_REPOSITORY.findById(accountToId);
 		if (accountTo == null) {
-			throw new HTTPClientCustomException("Inexistent destination account!");
+			throw new HTTPCustomClientException("Inexistent destination account!");
 		}
 
 		if (accountFrom.getBalance().compareTo(amount) == -1) {
-			throw new HTTPClientCustomException("Entered sum is too big for this account!");
+			throw new HTTPCustomClientException("Entered sum is too big for this account!");
 		}
 
 		accountFrom.setBalance(accountFrom.getBalance().subtract(amount));
@@ -85,16 +104,17 @@ public class AccountService {
 		new TransactionService().create(accountTo, accountTo.getAccountNumber(), amount, null, "incoming");
 	}
 
-	public List<Account> findByUser(long userId) {
-		return ACCOUNT_REPOSITORY.findByUser(userId);
+	public List<Account> findByUser(String token, long userId) {
+		return ACCOUNT_REPOSITORY.findByUserObj(userId);
 	}
 
-	public Account findFirstByUserAndAccountNumber(long userId, String accountNumber) {
-		return ACCOUNT_REPOSITORY.findFirstByUserAndAccountNumber(userId, accountNumber);
+	public Account findFirstByUserAndAccountNumber(String token, long userId, String accountNumber) {
+		return ACCOUNT_REPOSITORY.findFirstByUserObjAndAccountNumber(userId, accountNumber);
 	}
 
-	public List<Account> findByUserAndTypeExceptAccountNumber(long userId, String accountType, String accountNumber) {
-		return ACCOUNT_REPOSITORY.findByUserAndTypeExceptAccountNumber(userId, accountType, accountNumber);
+	public List<Account> findByUserAndTypeExceptAccountNumber(String token, long userId, String accountType,
+			String accountNumber) {
+		return ACCOUNT_REPOSITORY.findByUserObjAndTypeExceptAccountNumber(userId, accountType, accountNumber);
 	}
 
 }

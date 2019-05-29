@@ -4,12 +4,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import ecoin.model.Notification;
+import ecoin.model.Authentication;
 
 @Repository
-public interface NotificationRepository extends CrudRepository<Notification, Long> {
+public interface AuthenticationRepository extends CrudRepository<Authentication, Long> {
 
 	@Nullable
-	Notification findById(long id);
+	Authentication findFirstByToken(String token);
 
 }

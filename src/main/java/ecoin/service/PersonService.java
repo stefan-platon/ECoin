@@ -1,12 +1,12 @@
-package service;
+package ecoin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import exceptions.UniqueDatabaseConstraintException;
-import model.Person;
-import model.User;
-import repository.PersonRepository;
+import ecoin.exceptions.UniqueDatabaseConstraintException;
+import ecoin.model.Person;
+import ecoin.model.User;
+import ecoin.repository.PersonRepository;
 
 @Service
 public class PersonService {
