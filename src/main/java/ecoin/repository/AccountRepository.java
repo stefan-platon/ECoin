@@ -9,6 +9,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import ecoin.model.Account;
+import ecoin.model.User;
 
 @Repository
 public interface AccountRepository extends CrudRepository<Account, Long> {
@@ -20,9 +21,9 @@ public interface AccountRepository extends CrudRepository<Account, Long> {
 	Account findFirstByAccountNumber(String accountNumber);
 
 	@Nullable
-	Account findFirstByUserObjAndAccountNumber(long userId, String accountNumber);
+	Account findFirstByUserObjAndAccountNumber(User user, String accountNumber);
 
-	List<Account> findByUserObj(long userId);
+	List<Account> findByUserObj(User user);
 
 	@Query("from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
 	List<Account> findByUserObjAndTypeExceptAccountNumber(@Param("user_id") long userId,

@@ -48,7 +48,6 @@ public class UserService {
 
 	public String login(String username, String password) {
 		User user = USER_REPOSITORY.findFirstByUsernameAndPassword(username, password);
-
 		if (user == null) {
 			throw new UserNotFoundException();
 		}
@@ -56,19 +55,28 @@ public class UserService {
 		String token;
 		Authentication authentication;
 
+		// check if user already has a token
+		authentication = AUTHENTICATION_REPOSITORY.findFirstByUserObj(user);
+		if (authentication != null) {
+			return authentication.getToken();
+		}
+
+		// create new token
 		do {
 			token = RandomStringUtils.random(20, true, true);
 			authentication = AUTHENTICATION_REPOSITORY.findFirstByToken(token);
 		} while (authentication != null);
 
 		authentication = new Authentication();
-
 		authentication.setToken(token);
 		authentication.setUserObj(user);
-
 		authentication = AUTHENTICATION_REPOSITORY.save(authentication);
 
 		return authentication.getToken();
+	}
+
+	public void logout(String token) {
+		AUTHENTICATION_REPOSITORY.deleteByToken(token);
 	}
 
 	public User getById(long id) {

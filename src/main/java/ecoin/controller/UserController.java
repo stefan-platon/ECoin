@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import ecoin.exceptions.WrongTokenException;
 import ecoin.model.User;
 import ecoin.request_body.user.UserCreateRequestBody;
 import ecoin.request_response.user.LoginRequestResponse;
@@ -44,7 +45,7 @@ public class UserController extends Controller {
 				body.getFirstName(), body.getLastName());
 	}
 
-	@GetMapping("/user/{username}/{password}")
+	@GetMapping("/user/login/{username}/{password}")
 	public LoginRequestResponse login(@PathVariable String username, @PathVariable String password) {
 		String token = USER_SERVICE.login(username, password);
 
@@ -52,6 +53,15 @@ public class UserController extends Controller {
 		response.setToken(token);
 
 		return response;
+	}
+
+	@GetMapping("/user/logout/{token}")
+	public void logout(@PathVariable String token) {
+		if (checkToken(token)) {
+			USER_SERVICE.logout(token);
+		} else {
+			throw new WrongTokenException();
+		}
 	}
 
 }
