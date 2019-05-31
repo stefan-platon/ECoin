@@ -1,6 +1,6 @@
-package ecoin.request_details;
+package ecoin.request_body.user;
 
-public class UserCreateDetails {
+public class UserCreateRequestBody {
 
 	String username;
 

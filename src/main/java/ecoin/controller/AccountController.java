@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ecoin.exceptions.HTTPCustomClientException;
 import ecoin.model.Account;
+import ecoin.request_body.account.AccountTransferRequestBody;
 import ecoin.service.AccountService;
 
 @RestController
@@ -32,10 +33,10 @@ public class AccountController extends Controller {
 	}
 
 	@PostMapping("/account/transfer/{token}")
-	public void transfer(@PathVariable String token, @RequestBody long accountFromId, @RequestBody long accountToId,
-			@RequestBody BigDecimal amount, @RequestBody String details) {
+	public void transfer(@PathVariable String token, @RequestBody AccountTransferRequestBody body) {
 		if (checkToken(token)) {
-			ACCOUNT_SERVICE.transfer(token, accountFromId, accountToId, amount, details);
+			ACCOUNT_SERVICE.transfer(token, body.getAccountFrom(), body.getAccountTo(), body.getAmount(),
+					body.getDetails());
 		} else {
 			throw new HTTPCustomClientException();
 		}

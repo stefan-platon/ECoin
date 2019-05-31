@@ -14,7 +14,10 @@ import ecoin.model.Account;
 public interface AccountRepository extends CrudRepository<Account, Long> {
 
 	@Nullable
-	Account findById(long id);
+	Account findFirstById(long id);
+
+	@Nullable
+	Account findFirstByAccountNumber(String accountNumber);
 
 	@Nullable
 	Account findFirstByUserObjAndAccountNumber(long userId, String accountNumber);

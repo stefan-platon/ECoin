@@ -69,13 +69,14 @@ public class AccountService {
 		return account;
 	}
 
-	public void transfer(String token, long accountFromId, long accountToId, BigDecimal amount, String details) {
-		Account accountFrom = ACCOUNT_REPOSITORY.findById(accountFromId);
+	public void transfer(String token, String fromAccountNumber, String toAccountNumber, BigDecimal amount,
+			String details) {
+		Account accountFrom = ACCOUNT_REPOSITORY.findFirstByAccountNumber(fromAccountNumber);
 		if (accountFrom == null) {
 			throw new HTTPCustomClientException("Inexistent source account!");
 		}
 
-		Account accountTo = ACCOUNT_REPOSITORY.findById(accountToId);
+		Account accountTo = ACCOUNT_REPOSITORY.findFirstByAccountNumber(toAccountNumber);
 		if (accountTo == null) {
 			throw new HTTPCustomClientException("Inexistent destination account!");
 		}

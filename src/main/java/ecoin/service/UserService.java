@@ -48,18 +48,20 @@ public class UserService {
 			throw new UserNotFoundException("User not found");
 		}
 
-		String token = RandomStringUtils.random(20, true, true);
+		String token;
+		Authentication authentication;
 
-		Authentication authentication = AUTHENTICATION_REPOSITORY.findFirstByToken(token);
+		do {
+			token = RandomStringUtils.random(20, true, true);
+			authentication = AUTHENTICATION_REPOSITORY.findFirstByToken(token);
+		} while (authentication != null);
 
-		if (authentication == null) {
-			authentication = new Authentication();
+		authentication = new Authentication();
 
-			authentication.setToken(token);
-			authentication.setUserObj(user);
+		authentication.setToken(token);
+		authentication.setUserObj(user);
 
-			authentication = AUTHENTICATION_REPOSITORY.save(authentication);
-		}
+		authentication = AUTHENTICATION_REPOSITORY.save(authentication);
 
 		return authentication.getToken();
 	}

@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ecoin.model.User;
-import ecoin.request_details.UserCreateDetails;
+import ecoin.request_body.user.UserCreateRequestBody;
+import ecoin.request_response.user.LoginRequestResponse;
 import ecoin.service.UserService;
 
 @RestController
@@ -33,14 +34,19 @@ public class UserController extends Controller {
 	@PostMapping("/user")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(consumes = "application/json", produces = "application/json")
-	public User create(@RequestBody UserCreateDetails details) {
-		return USER_SERVICE.create(details.getUsername(), details.getPassword(), details.getAddress(),
-				details.getEmail(), details.getFirstName(), details.getLastName());
+	public User create(@RequestBody UserCreateRequestBody body) {
+		return USER_SERVICE.create(body.getUsername(), body.getPassword(), body.getAddress(), body.getEmail(),
+				body.getFirstName(), body.getLastName());
 	}
 
 	@GetMapping("/user/{username}/{password}")
-	public String login(@PathVariable String username, @PathVariable String password) {
-		return USER_SERVICE.login(username, password);
+	public LoginRequestResponse login(@PathVariable String username, @PathVariable String password) {
+		String token = USER_SERVICE.login(username, password);
+
+		LoginRequestResponse response = new LoginRequestResponse();
+		response.setToken(token);
+
+		return response;
 	}
 
 }
