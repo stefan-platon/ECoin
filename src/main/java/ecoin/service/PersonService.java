@@ -11,8 +11,13 @@ import ecoin.repository.PersonRepository;
 @Service
 public class PersonService {
 
-	@Autowired
 	private PersonRepository PERSON_REPOSITORY;
+
+	@Autowired
+	public PersonService(PersonRepository PERSON_REPOSITORY) {
+		super();
+		this.PERSON_REPOSITORY = PERSON_REPOSITORY;
+	}
 
 	public Person create(String address, String email, String firstName, String lastName, User user) {
 		Person person = new Person();

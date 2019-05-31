@@ -3,14 +3,15 @@ package ecoin.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ecoin.exceptions.AccountDataValidationException;
-import ecoin.exceptions.HTTPCustomClientException;
+import ecoin.exceptions.AccountTransferException;
+import ecoin.exceptions.CustomException;
 import ecoin.exceptions.UserNotFoundException;
 import ecoin.model.Account;
 import ecoin.model.User;
@@ -21,45 +22,46 @@ public class AccountService {
 
 	private static final Logger LOGGER = LogManager.getLogger(AccountService.class);
 
-	@Autowired
 	AccountRepository ACCOUNT_REPOSITORY;
 
-	@Autowired
+	NotificationService NOTIFICATION_SERVICE;
+
+	TransactionService TRANSACTION_SERVICE;
+
 	UserService USER_SERVICE;
 
-	public Account create(String token, Account account) {
-		User user = USER_SERVICE.getById(account.getUserObj().getId());
-
-		if (user == null) {
-			throw new UserNotFoundException("Could not find user!");
-		}
-
-		Account newAccount = ACCOUNT_REPOSITORY.save(account);
-		LOGGER.info("new account : " + newAccount.getAccountNumber());
-
-		return newAccount;
+	@Autowired
+	public AccountService(AccountRepository ACCOUNT_REPOSITORY, NotificationService NOTIFICATION_SERVICE,
+			TransactionService TRANSACTION_SERVICE, UserService USER_SERVICE) {
+		super();
+		this.ACCOUNT_REPOSITORY = ACCOUNT_REPOSITORY;
+		this.NOTIFICATION_SERVICE = NOTIFICATION_SERVICE;
+		this.TRANSACTION_SERVICE = TRANSACTION_SERVICE;
+		this.USER_SERVICE = USER_SERVICE;
 	}
 
-	public Account create(String token, String accountNumber, BigDecimal balance, String accountType, long userId) {
-		User user = new UserService().getById(userId);
+	public Account create(String accountNumber, BigDecimal balance, String accountType, long userId) {
+		User user = USER_SERVICE.getById(userId);
 
 		if (user == null) {
-			throw new UserNotFoundException("Could not find user!");
+			throw new UserNotFoundException();
 		}
 
 		Account account = new Account();
+
+		if (accountNumber == null) {
+			StringBuilder sb = new StringBuilder("RO");
+			sb.append(RandomStringUtils.random(22, true, true));
+			accountNumber = sb.toString();
+		}
 
 		try {
 			account.setAccountNumber(accountNumber);
 			account.setBalance(balance);
 			account.setAccountType(accountType);
 			account.setUserObj(user);
-		} catch (AccountDataValidationException e) {
-			throw new HTTPCustomClientException(e.getMessage());
 		} catch (ConstraintViolationException e) {
-			throw new HTTPCustomClientException("Account number already exists!");
-		} catch (Exception e) {
-			throw new HTTPCustomClientException(e.getMessage());
+			throw new CustomException("Account number already exists!");
 		}
 
 		account = ACCOUNT_REPOSITORY.save(account);
@@ -69,20 +71,27 @@ public class AccountService {
 		return account;
 	}
 
-	public void transfer(String token, String fromAccountNumber, String toAccountNumber, BigDecimal amount,
-			String details) {
+	public void transfer(String fromAccountNumber, String toAccountNumber, BigDecimal amount, String details) {
 		Account accountFrom = ACCOUNT_REPOSITORY.findFirstByAccountNumber(fromAccountNumber);
 		if (accountFrom == null) {
-			throw new HTTPCustomClientException("Inexistent source account!");
+			throw new AccountTransferException("Inexistent source account!");
 		}
 
 		Account accountTo = ACCOUNT_REPOSITORY.findFirstByAccountNumber(toAccountNumber);
 		if (accountTo == null) {
-			throw new HTTPCustomClientException("Inexistent destination account!");
+			throw new AccountTransferException("Inexistent destination account!");
 		}
 
 		if (accountFrom.getBalance().compareTo(amount) == -1) {
-			throw new HTTPCustomClientException("Entered sum is too big for this account!");
+			throw new AccountTransferException("Entered sum is too big for this account!");
+		}
+
+		if (!accountFrom.getAccountType().equals(accountTo.getAccountType())) {
+			throw new AccountTransferException("The accounts are not of the same type!");
+		}
+
+		if (accountFrom.getAccountNumber().equals(accountTo.getAccountNumber())) {
+			throw new AccountTransferException("You cannot transfer to the same account!");
 		}
 
 		accountFrom.setBalance(accountFrom.getBalance().subtract(amount));
@@ -96,25 +105,24 @@ public class AccountService {
 		notificationDetails.append(String.format("Amount : %s; ", amount.toString()));
 		notificationDetails.append(String.format("Details : %s; ", details == null ? "" : details));
 
-		new NotificationService().create(notificationDetails.toString(), accountFrom.getUserObj());
+		NOTIFICATION_SERVICE.create(notificationDetails.toString(), accountFrom.getUserObj());
 
 		// source account
-		new TransactionService().create(accountFrom, accountFrom.getAccountNumber(), amount, details, "outgoing");
+		TRANSACTION_SERVICE.create(accountFrom, accountFrom.getAccountNumber(), amount, details, "outgoing");
 
 		// destination account
-		new TransactionService().create(accountTo, accountTo.getAccountNumber(), amount, null, "incoming");
+		TRANSACTION_SERVICE.create(accountTo, accountTo.getAccountNumber(), amount, null, "incoming");
 	}
 
-	public List<Account> findByUser(String token, long userId) {
+	public List<Account> findByUser(long userId) {
 		return ACCOUNT_REPOSITORY.findByUserObj(userId);
 	}
 
-	public Account findFirstByUserAndAccountNumber(String token, long userId, String accountNumber) {
+	public Account findFirstByUserAndAccountNumber(long userId, String accountNumber) {
 		return ACCOUNT_REPOSITORY.findFirstByUserObjAndAccountNumber(userId, accountNumber);
 	}
 
-	public List<Account> findByUserAndTypeExceptAccountNumber(String token, long userId, String accountType,
-			String accountNumber) {
+	public List<Account> findByUserAndTypeExceptAccountNumber(long userId, String accountType, String accountNumber) {
 		return ACCOUNT_REPOSITORY.findByUserObjAndTypeExceptAccountNumber(userId, accountType, accountNumber);
 	}
 

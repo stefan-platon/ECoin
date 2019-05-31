@@ -18,11 +18,16 @@ public class UserService {
 
 	private static final Logger LOGGER = LogManager.getLogger(UserService.class);
 
-	@Autowired
 	private UserRepository USER_REPOSITORY;
 
-	@Autowired
 	private AuthenticationRepository AUTHENTICATION_REPOSITORY;
+
+	@Autowired
+	public UserService(UserRepository USER_REPOSITORY, AuthenticationRepository AUTHENTICATION_REPOSITORY) {
+		super();
+		this.USER_REPOSITORY = USER_REPOSITORY;
+		this.AUTHENTICATION_REPOSITORY = AUTHENTICATION_REPOSITORY;
+	}
 
 	public User create(String username, String password, String address, String email, String firstName,
 			String lastName) {
@@ -45,7 +50,7 @@ public class UserService {
 		User user = USER_REPOSITORY.findFirstByUsernameAndPassword(username, password);
 
 		if (user == null) {
-			throw new UserNotFoundException("User not found");
+			throw new UserNotFoundException();
 		}
 
 		String token;

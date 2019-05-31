@@ -23,8 +23,13 @@ import ecoin.service.UserService;
 @RestController
 public class UserController extends Controller {
 
-	@Autowired
 	UserService USER_SERVICE;
+
+	@Autowired
+	public UserController(UserService USER_SERVICE) {
+		super();
+		this.USER_SERVICE = USER_SERVICE;
+	}
 
 	@ExceptionHandler({ Exception.class })
 	void handleBadRequests(HttpServletResponse response) throws IOException {

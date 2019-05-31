@@ -9,8 +9,13 @@ import ecoin.repository.AuthenticationRepository;
 @Service
 public class AuthenticationService {
 
-	@Autowired
 	private AuthenticationRepository AUTHENTICATION_REPOSITORY;
+
+	@Autowired
+	public AuthenticationService(AuthenticationRepository AUTHENTICATION_REPOSITORY) {
+		super();
+		this.AUTHENTICATION_REPOSITORY = AUTHENTICATION_REPOSITORY;
+	}
 
 	public boolean checkToken(String token) {
 		Authentication authentication = AUTHENTICATION_REPOSITORY.findFirstByToken(token);

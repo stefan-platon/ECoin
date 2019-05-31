@@ -11,8 +11,13 @@ import ecoin.repository.NotificationRepository;
 @Service
 public class NotificationService {
 
-	@Autowired
 	private NotificationRepository NOTIFICATION_REPOSITORY;
+
+	@Autowired
+	public NotificationService(NotificationRepository NOTIFICATION_REPOSITORY) {
+		super();
+		this.NOTIFICATION_REPOSITORY = NOTIFICATION_REPOSITORY;
+	}
 
 	public Notification create(String details, User user) {
 		Notification notification = new Notification();

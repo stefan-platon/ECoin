@@ -12,8 +12,13 @@ import ecoin.repository.TransactionRepository;
 @Service
 public class TransactionService {
 
-	@Autowired
 	private TransactionRepository TRANSACTION_REPOSITORY;
+
+	@Autowired
+	public TransactionService(TransactionRepository TRANSACTION_REPOSITORY) {
+		super();
+		this.TRANSACTION_REPOSITORY = TRANSACTION_REPOSITORY;
+	}
 
 	public Transaction create(Account accountObj, String acountNumber, BigDecimal amount, String details, String type) {
 		Transaction transaction = new Transaction();
