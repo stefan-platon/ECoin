@@ -12,4 +12,8 @@ public class WrongTokenException extends RuntimeException {
 		super("Wrong token!");
 	}
 
+	public WrongTokenException(String message) {
+		super(message);
+	}
+
 }

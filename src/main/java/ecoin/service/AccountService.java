@@ -115,11 +115,13 @@ public class AccountService {
 	}
 
 	public List<Account> findByUser(long userId) {
-		return ACCOUNT_REPOSITORY.findByUserObj(userId);
+		User user = USER_SERVICE.getById(userId);
+		return ACCOUNT_REPOSITORY.findByUserObj(user);
 	}
 
 	public Account findFirstByUserAndAccountNumber(long userId, String accountNumber) {
-		return ACCOUNT_REPOSITORY.findFirstByUserObjAndAccountNumber(userId, accountNumber);
+		User user = USER_SERVICE.getById(userId);
+		return ACCOUNT_REPOSITORY.findFirstByUserObjAndAccountNumber(user, accountNumber);
 	}
 
 	public List<Account> findByUserAndTypeExceptAccountNumber(long userId, String accountType, String accountNumber) {
