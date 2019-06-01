@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -46,6 +47,9 @@ public class User {
 	@OneToMany(mappedBy = "userObj", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	private List<Authentication> authentications;
+
+	@OneToOne(mappedBy = "userObj")
+	private Person person;
 
 	/**
 	 * @return the id
@@ -143,6 +147,34 @@ public class User {
 	 */
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
+	}
+
+	/**
+	 * @return the authentications
+	 */
+	public List<Authentication> getAuthentications() {
+		return authentications;
+	}
+
+	/**
+	 * @param authentications the authentications to set
+	 */
+	public void setAuthentications(List<Authentication> authentications) {
+		this.authentications = authentications;
+	}
+
+	/**
+	 * @return the person
+	 */
+	public Person getPerson() {
+		return person;
+	}
+
+	/**
+	 * @param person the person to set
+	 */
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 
 	@PrePersist

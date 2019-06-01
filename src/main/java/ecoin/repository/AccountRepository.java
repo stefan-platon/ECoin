@@ -25,7 +25,7 @@ public interface AccountRepository extends CrudRepository<Account, Long> {
 
 	List<Account> findByUserObj(User user);
 
-	@Query("from Account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
+	@Query("from account where user_id = :user_id and account_type = :account_type and account_number != :account_number")
 	List<Account> findByUserObjAndTypeExceptAccountNumber(@Param("user_id") long userId,
 			@Param("account_type") String accountType, @Param("account_number") String accountNumber);
 

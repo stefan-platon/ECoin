@@ -106,8 +106,7 @@ public class Notification {
 	}
 
 	@PrePersist
-	private void initializeTime() {
-		this.sentTime = LocalDateTime.now();
+	private void initializeCreatedTime() {
 		this.createdTime = LocalDateTime.now();
 	}
 

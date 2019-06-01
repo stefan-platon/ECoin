@@ -20,7 +20,7 @@ import ecoin.repository.AccountRepository;
 @Service
 public class AccountService {
 
-	private static final Logger LOGGER = LogManager.getLogger(AccountService.class);
+	private final Logger LOGGER = LogManager.getLogger(AccountService.class);
 
 	AccountRepository ACCOUNT_REPOSITORY;
 
