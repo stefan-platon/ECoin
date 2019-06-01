@@ -1,6 +1,10 @@
  # Compiled class file
 *.class
 
+# Local configuration file (sdk path, etc)
+application.properties
+log4j2.xml
+
 # Log file
 *.log
 
